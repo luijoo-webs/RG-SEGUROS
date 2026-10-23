@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="es-CO">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+  <title>Tu solicitud | RG Asesorías y Seguros</title>
+  <link rel="icon" href="../assets/logo-rg.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Syne:wght@600;700&display=swap">
+  <link rel="stylesheet" href="../assets/panel.css">
+</head>
+<body>
+  <header class="caso-top">
+    <div class="caso-top__inner">
+      <img src="../assets/logo-rg.png" width="40" height="40" alt="">
+      <a href="../">RG Asesorías y Seguros</a>
+    </div>
+  </header>
+
+  <main class="caso" id="contenido">
+    <p class="alert alert--info" id="estado-carga" role="status">Cargando tu solicitud…</p>
+
+    <section class="caso__card" id="resumen" hidden>
+      <p class="eyebrow">Tu solicitud</p>
+      <h1 class="h1" id="codigo"></h1>
+      <div class="caso__meta">
+        <span class="pill" id="estado"></span>
+        <span id="fecha"></span>
+        <span id="asesor"></span>
+      </div>
+      <p class="muted" id="seguros" style="margin:12px 0 0"></p>
+    </section>
+
+    <section class="caso__card" id="conversacion" hidden aria-labelledby="conv-titulo">
+      <h2 class="eyebrow" id="conv-titulo">Conversación con tu asesor</h2>
+      <div class="thread" id="hilo" aria-live="polite"></div>
+      <form class="caso__form" id="responder">
+        <label class="label" for="texto">Escribe tu mensaje</label>
+        <textarea class="textarea" id="texto" maxlength="2000" required placeholder="Escribe aquí tu pregunta o la información que te pidió el asesor"></textarea>
+        <p class="alert alert--error" id="error" role="alert" hidden></p>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:space-between;align-items:center">
+          <span class="muted" style="font-size:.85rem">No compartas datos sensibles (cédula, datos bancarios o de salud) por este medio.</span>
+          <button class="btn" type="submit">Enviar mensaje</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="caso__card" id="guardar" hidden>
+      <p style="margin:0 0 10px"><strong>Guarda este enlace:</strong> es tu acceso personal para seguir esta solicitud. No lo compartas.</p>
+      <div style="display:flex;flex-wrap:wrap;gap:8px">
+        <button class="btn btn--line btn--sm" type="button" id="copiar">Copiar enlace</button>
+        <a class="btn btn--line btn--sm" href="https://wa.me/573165268039" target="_blank" rel="noopener">WhatsApp 316 526 8039</a>
+        <a class="btn btn--line btn--sm" href="tel:+573165268039">Llamar</a>
+      </div>
+    </section>
+  </main>
+
+  <script src="../config.js"></script>
+  <script src="../assets/rg-api.js"></script>
+  <script src="caso.js"></script>
+</body>
+</html>

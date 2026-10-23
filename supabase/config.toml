@@ -1,0 +1,7 @@
+# RG AI es pública (el visitante no inicia sesión); se protege con origen permitido y límites de uso.
+[functions.rg-ai]
+verify_jwt = false
+
+# notificar-cliente exige la sesión de un usuario del equipo.
+[functions.notificar-cliente]
+verify_jwt = true
