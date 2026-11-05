@@ -33,7 +33,8 @@
   function vaciar(n) { while (n.firstChild) n.removeChild(n.firstChild); return n; }
   function fecha(iso, corta) {
     if (!iso) return '—';
-    return new Date(iso).toLocaleString('es-CO', corta ? { day: 'numeric', month: 'short' } : { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit', timeZone: 'America/Bogota' });
+    if (/^\d{4}-\d{2}-\d{2}$/.test(iso)) iso += 'T12:00:00Z'; // un día sin hora se leería como medianoche UTC = día anterior en Colombia
+    return new Date(iso).toLocaleString('es-CO', corta ? { day: 'numeric', month: 'short', timeZone: 'America/Bogota' } : { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit', timeZone: 'America/Bogota' });
   }
   function hace(iso) {
     var m = Math.round((Date.now() - new Date(iso).getTime()) / 60000);
@@ -116,8 +117,11 @@
       if (!yo || (yo.rol !== 'admin' && yo.rol !== 'asesor')) {
         vaciar(app).appendChild(el('div', { class: 'login' }, el('div', { class: 'login__box' },
           el('h1', { class: 'h1', text: 'Sin permisos' }),
-          el('p', { class: 'muted', text: 'Tu cuenta aún no tiene un rol asignado. Pide a la administración que te dé acceso de asesor.' }),
-          el('button', { class: 'btn', type: 'button', text: 'Cerrar sesión', onclick: salir }))));
+          yo && yo.rol === 'cliente'
+            ? el('p', { class: 'muted', text: 'Este panel es solo para el equipo de RG. Tus solicitudes están en Mi cuenta.' })
+            : el('p', { class: 'muted', text: 'Tu cuenta aún no tiene un rol asignado. Pide a la administración que te dé acceso de asesor.' }),
+          yo && yo.rol === 'cliente' ? el('a', { class: 'btn', href: '../cuenta/', text: 'Ir a Mi cuenta' }) : null,
+          el('button', { class: yo && yo.rol === 'cliente' ? 'btn btn--line' : 'btn', type: 'button', text: 'Cerrar sesión', onclick: salir }))));
         return;
       }
       return rpc('panel_equipo').then(function (e) { equipo = e; armarShell(); ir(yo.rol === 'admin' ? 'resumen' : 'solicitudes'); escucharCambios(); });
@@ -173,6 +177,7 @@
         stat(r.tasa_cierre == null ? null : r.tasa_cierre + ' %', 'Tasa de cierre'),
         stat(r.primera_respuesta_horas == null ? null : r.primera_respuesta_horas + ' h', 'Tiempo 1.ª respuesta'),
         stat(r.clientes, 'Clientes'),
+        stat(r.cuentas, 'Cuentas de clientes'),
         stat(r.rg_ai, 'Consultas a RG AI')));
 
       // Serie diaria (solicitudes y RG AI)
@@ -395,11 +400,48 @@
   }
 
   // ---------- Equipo (solo admin) ----------
-  function verEquipo() {
+  var MOTIVOS_USUARIO = { ya_existe: 'Ese correo ya tiene una cuenta. Si es de un cliente, usa otro correo para el equipo.', datos: 'Revisa el nombre y el correo.', no_autorizado: 'Solo la administración puede crear usuarios.' };
+  // Pide a la Edge Function el código de activación; la contraseña la elige cada persona
+  function pedirEnlace(cuerpo) {
+    return sb.functions.invoke('crear-usuario', { body: cuerpo }).then(function (r) {
+      var d = r.data || {};
+      if (!d.ok) throw new Error(MOTIVOS_USUARIO[d.motivo] || 'No se pudo generar el acceso. Inténtalo de nuevo');
+      return { email: d.email, url: new URL('../cuenta/', location.href).href + '#activar=' + d.tipo + ':' + d.codigo };
+    });
+  }
+  function cajaEnlace(enlace) {
+    var campo = el('input', { class: 'input', readonly: true, value: enlace.url, 'aria-label': 'Enlace de activación' });
+    return el('section', { class: 'card', style: 'margin-bottom:16px' },
+      el('h2', { text: 'Enlace para ' + enlace.email }),
+      el('p', { class: 'muted', text: 'Envíaselo solo a esa persona: con él elige su contraseña y entra al panel. Sirve una vez y vence en 24 horas. No lo abras en este navegador.' }),
+      campo,
+      el('div', { class: 'detail__actions' },
+        el('button', { class: 'btn btn--sm', type: 'button', text: 'Copiar enlace', onclick: function () {
+          campo.select();
+          navigator.clipboard.writeText(enlace.url).then(function () { toast('Enlace copiado.'); }, function () { toast('Selecciona el enlace y cópialo.'); });
+        } }),
+        el('a', { class: 'btn btn--sm btn--line', href: 'https://wa.me/?text=' + encodeURIComponent('Hola, este es tu acceso al panel de RG Asesorías y Seguros. Ábrelo para crear tu contraseña: ' + enlace.url), target: '_blank', rel: 'noopener', text: 'Enviar por WhatsApp' })));
+  }
+
+  function verEquipo(enlace) {
     return rpc('panel_equipo').then(function (lista) {
       equipo = lista;
       vaciar(main).appendChild(cabecera('Accesos', 'Equipo'));
-      main.appendChild(el('p', { class: 'alert alert--info', text: 'Para dar acceso a una persona nueva: en Supabase → Authentication → Users → "Add user" crea su usuario con correo y contraseña. Aparecerá aquí sin permisos; asígnale el rol "Asesor" o "Administración".' }));
+      if (enlace) main.appendChild(cajaEnlace(enlace));
+      var nuevoNombre = el('input', { class: 'input', id: 'u-nombre', required: true, maxlength: 120, autocomplete: 'off' });
+      var nuevoCorreo = el('input', { class: 'input', id: 'u-correo', type: 'email', required: true, autocomplete: 'off' });
+      var nuevoRol = el('select', { class: 'select', id: 'u-rol' }, [['asesor', 'Asesor: solicitudes y clientes'], ['admin', 'Administración: todo, con estadísticas']].map(function (o) { return el('option', { value: o[0], text: o[1] }); }));
+      var crear = el('button', { class: 'btn btn--sm', type: 'submit', text: 'Crear usuario' });
+      main.appendChild(el('section', { class: 'card', style: 'margin-bottom:16px' }, el('h2', { text: 'Crear usuario' }),
+        el('form', { class: 'caso__form', onsubmit: function (e) {
+          e.preventDefault(); crear.disabled = true;
+          pedirEnlace({ nombre: nuevoNombre.value, email: nuevoCorreo.value, rol: nuevoRol.value })
+            .then(function (x) { toast('Usuario creado.'); return verEquipo(x); }).catch(falla).then(function () { crear.disabled = false; });
+        } },
+          el('label', { class: 'label', for: 'u-nombre', text: 'Nombre' }), nuevoNombre,
+          el('label', { class: 'label', for: 'u-correo', text: 'Correo' }), nuevoCorreo,
+          el('label', { class: 'label', for: 'u-rol', text: 'Rol' }), nuevoRol,
+          el('div', {}, crear))));
       main.appendChild(el('div', { class: 'table-wrap' }, el('table', { class: 'table' },
         el('thead', {}, el('tr', {}, ['Nombre', 'Correo', 'Rol', ''].map(function (t) { return el('th', { scope: 'col', text: t }); }))),
         el('tbody', {}, lista.map(function (p) {
@@ -409,6 +451,8 @@
           return el('tr', {}, el('td', {}, nombre), el('td', { text: p.email }), el('td', {}, rol),
             el('td', {}, el('button', { class: 'btn btn--sm', type: 'button', text: 'Guardar', onclick: function () {
               rpc('panel_cambiar_rol', { p_usuario: p.id, p_rol: rol.value, p_nombre: nombre.value }).then(function () { toast('Cambios guardados.'); verEquipo(); }).catch(falla);
+            } }), ' ', p.id === yo.id ? null : el('button', { class: 'btn btn--sm btn--line', type: 'button', text: 'Enlace de acceso', title: 'Para quien no activó a tiempo u olvidó su contraseña', onclick: function () {
+              pedirEnlace({ usuario_id: p.id }).then(function (x) { return verEquipo(x); }).catch(falla);
             } })));
         })))));
     });

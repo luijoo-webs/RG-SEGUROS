@@ -5,3 +5,7 @@ verify_jwt = false
 # notificar-cliente exige la sesión de un usuario del equipo.
 [functions.notificar-cliente]
 verify_jwt = true
+
+# crear-usuario exige la sesión de la dueña (rol admin).
+[functions.crear-usuario]
+verify_jwt = true

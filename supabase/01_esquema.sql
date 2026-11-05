@@ -23,6 +23,12 @@ create table if not exists public.perfiles (
   created_at  timestamptz not null default now()
 );
 
+-- Cuentas de clientes (creadas desde "Mi cuenta"): rol 'cliente'
+alter table public.perfiles add column if not exists telefono text not null default '';
+alter table public.perfiles add column if not exists autorizacion_at timestamptz;
+alter table public.perfiles drop constraint if exists perfiles_rol_check;
+alter table public.perfiles add constraint perfiles_rol_check check (rol in ('admin', 'asesor', 'cliente', 'ninguno'));
+
 create sequence if not exists public.solicitudes_numero_seq;
 
 create table if not exists public.solicitudes (
@@ -110,8 +116,13 @@ end $$;
 create or replace function public.crear_perfil()
 returns trigger language plpgsql security definer set search_path = public as $$
 begin
-  insert into public.perfiles (id, email, nombre)
-  values (new.id, new.email, left(coalesce(new.raw_user_meta_data->>'nombre', split_part(new.email, '@', 1)), 120))
+  -- Nunca se asigna admin/asesor desde los datos que envía el navegador
+  insert into public.perfiles (id, email, nombre, telefono, rol, autorizacion_at)
+  values (new.id, new.email,
+          left(coalesce(nullif(btrim(new.raw_user_meta_data->>'nombre'), ''), split_part(new.email, '@', 1)), 120),
+          left(regexp_replace(coalesce(new.raw_user_meta_data->>'telefono', ''), '[^0-9+ ()-]', '', 'g'), 20),
+          case when new.raw_user_meta_data->>'tipo' = 'cliente' then 'cliente' else 'ninguno' end,
+          case when new.raw_user_meta_data->>'autorizacion' = 'si' then now() end)
   on conflict (id) do nothing;
   return new;
 end $$;
@@ -248,6 +259,39 @@ begin
   insert into public.rg_ai_uso (dia, consultas) values (v_dia, 1)
   on conflict (dia) do update set consultas = public.rg_ai_uso.consultas + 1;
   return 'ok';
+end $$;
+
+-- Mi cuenta: solicitudes del cliente. Se vinculan por correo SOLO si la cuenta confirmó ese correo.
+create or replace function public.cliente_resumen()
+returns json language plpgsql stable security definer set search_path = public as $$
+declare v_email text; v json;
+begin
+  if auth.uid() is null then raise exception 'NO_AUTORIZADO' using errcode = '42501'; end if;
+  select lower(email) into v_email from auth.users where id = auth.uid() and email_confirmed_at is not null;
+  select json_build_object(
+    'perfil', (select json_build_object('nombre', p.nombre, 'email', p.email, 'telefono', p.telefono, 'rol', p.rol) from public.perfiles p where p.id = auth.uid()),
+    'confirmado', v_email is not null,
+    'solicitudes', coalesce((select json_agg(x order by x.ultimo_mensaje_at desc) from (
+        select 'RG-' || lpad(s.numero::text, 4, '0') as codigo, s.estado, s.seguros, s.created_at as creada, s.ultimo_mensaje_at, s.token,
+               (select count(*) from public.mensajes m where m.solicitud_id = s.id and m.autor = 'asesor' and not m.interno) as respuestas,
+               (select max(m.created_at) from public.mensajes m where m.solicitud_id = s.id and m.autor = 'asesor' and not m.interno) as ultima_respuesta,
+               (select nullif(p.nombre, '') from public.perfiles p where p.id = s.asignado_a) as asesor
+        from public.solicitudes s where v_email is not null and lower(s.email) = v_email) x), '[]'::json))
+  into v;
+  return v;
+end $$;
+
+create or replace function public.cliente_actualizar(p_nombre text, p_telefono text)
+returns json language plpgsql security definer set search_path = public as $$
+declare v_nombre text := public.limpiar(p_nombre, 120); v_tel text := public.limpiar(p_telefono, 20);
+begin
+  if auth.uid() is null then raise exception 'NO_AUTORIZADO' using errcode = '42501'; end if;
+  if v_nombre = '' then return json_build_object('ok', false, 'message', 'Escribe tu nombre.'); end if;
+  if v_tel <> '' and (v_tel !~ '^\+?[0-9 ()-]{7,20}$' or length(regexp_replace(v_tel, '\D', '', 'g')) not between 7 and 15) then
+    return json_build_object('ok', false, 'message', 'Escribe un teléfono válido (7 a 15 dígitos).');
+  end if;
+  update public.perfiles set nombre = v_nombre, telefono = v_tel where id = auth.uid();
+  return json_build_object('ok', true);
 end $$;
 
 -- ---------------------------------------------------------------------------
@@ -431,6 +475,7 @@ begin
     'tasa_cierre', (select round(100.0 * count(*) filter (where estado = 'ganada') / nullif(count(*) filter (where estado in ('ganada', 'perdida')), 0), 1) from s),
     'primera_respuesta_horas', (select round((extract(epoch from avg(primera_respuesta_at - created_at)) / 3600)::numeric, 1) from s where primera_respuesta_at is not null),
     'clientes', (select count(distinct lower(email)) from s),
+    'cuentas', (select count(*) from public.perfiles where rol = 'cliente'),
     'rg_ai', (select coalesce(sum(consultas), 0) from public.rg_ai_uso where dia >= (v_desde at time zone 'America/Bogota')::date),
     'por_dia', coalesce((select json_agg(json_build_object('dia', d, 'n', n) order by d) from (
         select (created_at at time zone 'America/Bogota')::date d, count(*) n from s group by 1) t), '[]'::json),
@@ -455,7 +500,7 @@ begin
   perform public.exigir_equipo();
   select coalesce(json_agg(json_build_object('id', id, 'email', email, 'nombre', nombre, 'rol', rol) order by rol, nombre), '[]'::json)
   into v from public.perfiles
-  where public.rol_actual() = 'admin' or rol in ('admin', 'asesor');   -- los asesores solo ven al equipo activo (para asignar)
+  where rol <> 'cliente' and (public.rol_actual() = 'admin' or rol in ('admin', 'asesor'));   -- los asesores solo ven al equipo activo (para asignar)
   return v;
 end $$;
 
@@ -464,6 +509,7 @@ returns json language plpgsql security definer set search_path = public as $$
 begin
   perform public.exigir_admin();
   if p_rol not in ('admin', 'asesor', 'ninguno') then raise exception 'ROL_INVALIDO'; end if;
+  if (select rol from public.perfiles where id = p_usuario) = 'cliente' then raise exception 'ES_CLIENTE'; end if;
   if p_usuario = auth.uid() and p_rol <> 'admin' then raise exception 'NO_PUEDES_QUITARTE_ADMIN'; end if;
   update public.perfiles set rol = p_rol, nombre = coalesce(nullif(public.limpiar(p_nombre, 120), ''), nombre) where id = p_usuario;
   insert into public.actividad (actor_id, tipo, detalle) values (auth.uid(), 'equipo', 'Rol ' || p_rol || ' para ' || (select email from public.perfiles where id = p_usuario));
@@ -521,7 +567,7 @@ begin
              'crear_solicitud', 'caso_ver', 'caso_responder', 'rg_ai_registrar', 'datos_notificacion', 'dentro_del_limite',
              'panel_yo', 'panel_solicitudes', 'panel_solicitud', 'panel_actualizar', 'panel_enviar_mensaje', 'panel_marcar_atendida',
              'panel_registrar_contacto', 'panel_clientes', 'panel_actividad', 'panel_resumen', 'panel_equipo', 'panel_cambiar_rol',
-             'panel_eliminar_solicitud', 'exigir_equipo', 'exigir_admin', 'crear_perfil')
+             'panel_eliminar_solicitud', 'exigir_equipo', 'exigir_admin', 'crear_perfil', 'cliente_resumen', 'cliente_actualizar')
   loop
     execute format('revoke all on function %s from public, anon, authenticated', f);
   end loop;
@@ -531,6 +577,8 @@ end $$;
 grant execute on function public.crear_solicitud(text, text, text, text, text, text, text, text, text) to anon, authenticated;
 grant execute on function public.caso_ver(uuid) to anon, authenticated;
 grant execute on function public.caso_responder(uuid, text) to anon, authenticated;
+grant execute on function public.cliente_resumen() to authenticated;
+grant execute on function public.cliente_actualizar(text, text) to authenticated;
 grant execute on function public.panel_yo() to authenticated;
 grant execute on function public.panel_solicitudes(text, text, text, integer, integer) to authenticated;
 grant execute on function public.panel_solicitud(uuid) to authenticated;
@@ -547,6 +595,7 @@ grant execute on function public.panel_eliminar_solicitud(uuid) to authenticated
 -- rg_ai_registrar y datos_notificacion: solo service_role (Edge Functions), que no necesita grant explícito en Supabase.
 grant execute on function public.rg_ai_registrar(text, integer, integer, integer, integer) to service_role;
 grant execute on function public.datos_notificacion(uuid) to service_role;
+grant select on public.perfiles to service_role;  -- crear-usuario: enlace nuevo para alguien del equipo
 
 -- ---------------------------------------------------------------------------
 -- 6. Tiempo real (avisos en el panel)
