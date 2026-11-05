@@ -2,10 +2,10 @@
 [functions.rg-ai]
 verify_jwt = false
 
-# notificar-cliente exige la sesión de un usuario del equipo.
+# notificar-cliente y crear-usuario comprueban la sesión y el rol en su propio código (panel_yo);
+# la verificación antigua de Supabase rechazaría las sesiones firmadas con las claves nuevas.
 [functions.notificar-cliente]
-verify_jwt = true
+verify_jwt = false
 
-# crear-usuario exige la sesión de la dueña (rol admin).
 [functions.crear-usuario]
-verify_jwt = true
+verify_jwt = false
