@@ -669,6 +669,7 @@ dialog::backdrop { background: rgb(10 18 51 / 55%); backdrop-filter: blur(3px); 
 .story picture { border-radius: 999px 999px var(--r-xl) var(--r-xl); }
 .mv article { position: relative; border-radius: var(--r-xl); }
 .stat { position: relative; }
+.stats--texto .stat span { margin-top: 0; font: 600 clamp(1.2rem, 2.2vw, 1.9rem)/1.15 var(--display); letter-spacing: 0; text-transform: none; color: var(--yellow); }
 .ai-mock { position: relative; border-radius: var(--r-xl); }
 .ai-mock__q { border-radius: 20px 20px 4px 20px; }
 .ai-prompt { border-radius: 999px; }
@@ -979,7 +980,7 @@ dialog::backdrop { background: rgb(10 18 51 / 55%); backdrop-filter: blur(3px); 
         <div class="slide__content wrap">
           <span class="eyebrow">Siniestros</span>
           <p class="h-display">Te acompañamos cuando más lo <span class="hl">necesitas</span></p>
-          <p class="lead">Te apoyamos durante el proceso de reclamación para proteger tus derechos.</p>
+          <p class="lead">Te apoyamos durante el proceso de reclamación para proteger tus intereses.</p>
           <div class="hero__actions">
             <a class="btn btn--white" href="https://wa.me/573165268039?text=Hola,%20necesito%20ayuda%20con%20un%20siniestro" target="_blank" rel="noopener">Reportar un siniestro</a>
             <a class="btn btn--ghost" href="#personas">Seguros para personas</a>
@@ -1022,7 +1023,7 @@ dialog::backdrop { background: rgb(10 18 51 / 55%); backdrop-filter: blur(3px); 
   <div class="product__info">
     <p class="product__cat"><span>Personas y familias</span></p>
     <h3 class="product__name">Seguro de Vida</h3>
-    <p class="product__desc">Tranquilidad para tu familia. Un seguro que combina protección y tranquilidad para tu familia en caso de fallecimiento o accidente.</p>
+    <p class="product__desc">Tranquilidad para ti y tu familia en caso de invalidez, incapacidad total y/o permanente, enfermedades graves o fallecimiento.</p>
     <button class="product__price" type="button" data-quickview="vida">Cotización personalizada<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
   </div>
   <button class="product__add" type="button" data-add="vida"><svg class="icon product__add-ico" aria-hidden="true"><use href="#i-shield"/></svg><span class="product__add-on">Agregar a mi solicitud</span><span class="product__add-off">✓ En tu solicitud</span><span class="product__add-go" aria-hidden="true"><svg class="icon"><use href="#i-arrow"/></svg></span></button>
@@ -1186,7 +1187,7 @@ dialog::backdrop { background: rgb(10 18 51 / 55%); backdrop-filter: blur(3px); 
   <div class="product__info">
     <p class="product__cat"><span>Personas y familias</span></p>
     <h3 class="product__name">Seguro de Salud</h3>
-    <p class="product__desc">Accede a servicios médicos de alta calidad para ti y tu familia ante cualquier eventualidad de salud. Incluye cobertura hospitalaria y ambulatoria.</p>
+    <p class="product__desc">Accede a servicios médicos preferenciales para ti y tu familia, con medicina preventiva y ante cualquier eventualidad. Incluye cobertura hospitalaria y ambulatoria.</p>
     <button class="product__price" type="button" data-quickview="salud">Cotización personalizada<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
   </div>
   <button class="product__add" type="button" data-add="salud"><svg class="icon product__add-ico" aria-hidden="true"><use href="#i-shield"/></svg><span class="product__add-on">Agregar a mi solicitud</span><span class="product__add-off">✓ En tu solicitud</span><span class="product__add-go" aria-hidden="true"><svg class="icon"><use href="#i-arrow"/></svg></span></button>
@@ -1200,7 +1201,7 @@ dialog::backdrop { background: rgb(10 18 51 / 55%); backdrop-filter: blur(3px); 
   <div class="product__info">
     <p class="product__cat"><span>Personas y familias</span></p>
     <h3 class="product__name">Seguro de Vida</h3>
-    <p class="product__desc">Tranquilidad para tu familia. Un seguro que combina protección y tranquilidad para tu familia en caso de fallecimiento o accidente.</p>
+    <p class="product__desc">Tranquilidad para ti y tu familia en caso de invalidez, incapacidad total y/o permanente, enfermedades graves o fallecimiento.</p>
     <button class="product__price" type="button" data-quickview="vida">Cotización personalizada<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
   </div>
   <button class="product__add" type="button" data-add="vida"><svg class="icon product__add-ico" aria-hidden="true"><use href="#i-shield"/></svg><span class="product__add-on">Agregar a mi solicitud</span><span class="product__add-off">✓ En tu solicitud</span><span class="product__add-go" aria-hidden="true"><svg class="icon"><use href="#i-arrow"/></svg></span></button>
@@ -1214,21 +1215,21 @@ dialog::backdrop { background: rgb(10 18 51 / 55%); backdrop-filter: blur(3px); 
   <div class="product__info">
     <p class="product__cat"><span>Personas y familias</span></p>
     <h3 class="product__name">Seguro Educativo</h3>
-    <p class="product__desc">Asegura su futuro educativo. Garantiza el pago de la matrícula universitaria del beneficiario hasta por varios períodos académicos, asegurando su futuro educativo.</p>
+    <p class="product__desc">Puedes garantizarles la oportunidad de estudiar la carrera que sueñan, en la universidad de su preferencia. Asegura el valor de toda su carrera universitaria. Adquiere el seguro por semestres.</p>
     <button class="product__price" type="button" data-quickview="educativo">Cotización personalizada<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
   </div>
   <button class="product__add" type="button" data-add="educativo"><svg class="icon product__add-ico" aria-hidden="true"><use href="#i-shield"/></svg><span class="product__add-on">Agregar a mi solicitud</span><span class="product__add-off">✓ En tu solicitud</span><span class="product__add-go" aria-hidden="true"><svg class="icon"><use href="#i-arrow"/></svg></span></button>
 </article>
 <article class="product reveal" id="accidentes" data-id="accidentes" data-cat="personas">
-  <button class="product__media tile tile--petroleo" type="button" data-quickview="accidentes" aria-label="Ver detalle: Seguro de Accidentes">
+  <button class="product__media tile tile--petroleo" type="button" data-quickview="accidentes" aria-label="Ver detalle: Seguro de Accidentes Personales">
     <span class="product__num">06</span>
     <svg class="product__art" aria-hidden="true"><use href="#a-aid"/></svg>
     <span class="product__quick">Vista rápida</span>
   </button>
   <div class="product__info">
     <p class="product__cat"><span>Personas y familias</span></p>
-    <h3 class="product__name">Seguro de Accidentes</h3>
-    <p class="product__desc">Respaldo ante lo inesperado. Protección económica en caso de que ocurra un accidente inesperado.</p>
+    <h3 class="product__name">Seguro de Accidentes Personales</h3>
+    <p class="product__desc">Protege a estudiantes o equipos en excursiones, salidas pedagógicas y actividades grupales, con cobertura para gastos médicos por accidentes y fallecimiento accidental.</p>
     <button class="product__price" type="button" data-quickview="accidentes">Cotización personalizada<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
   </div>
   <button class="product__add" type="button" data-add="accidentes"><svg class="icon product__add-ico" aria-hidden="true"><use href="#i-shield"/></svg><span class="product__add-on">Agregar a mi solicitud</span><span class="product__add-off">✓ En tu solicitud</span><span class="product__add-go" aria-hidden="true"><svg class="icon"><use href="#i-arrow"/></svg></span></button>
@@ -1357,7 +1358,7 @@ dialog::backdrop { background: rgb(10 18 51 / 55%); backdrop-filter: blur(3px); 
           <p class="lead">RG Asesorías y Seguros es una organización conformada por profesionales especializados en asesoramiento en seguros y protección patrimonial.</p>
           <p>Nuestro objetivo es ayudar a personas, familias y empresas a tomar decisiones informadas para proteger su patrimonio, su bienestar y su futuro.</p>
           <div class="stats" style="border-top-color:var(--line);margin-top:28px;grid-template-columns:1fr">
-            <p class="stat" style="padding-top:22px"><strong style="color:var(--navy)">5+</strong><span style="color:var(--ink)">Años de experiencia</span></p>
+            <p class="stat" style="padding-top:22px"><strong style="color:var(--navy)">+15</strong><span style="color:var(--ink)">Años de experiencia</span></p>
           </div>
         </div>
       </div>
@@ -1401,10 +1402,10 @@ dialog::backdrop { background: rgb(10 18 51 / 55%); backdrop-filter: blur(3px); 
       <div class="banner__content wrap">
         <span class="eyebrow">Nuestros casos de éxito</span>
         <h2 class="h-display reveal" id="exito-titulo">Los servicios más <span class="hl">solicitados</span></h2>
-        <div class="stats">
-          <p class="stat"><strong data-count="150">150</strong><span>Seguros de vida vendidos</span></p>
-          <p class="stat"><strong data-count="100">100</strong><span>Seguros de hogar</span></p>
-          <p class="stat"><strong data-count="250">250</strong><span>Seguros multirriesgo solicitados</span></p>
+        <div class="stats stats--texto">
+          <p class="stat"><span>Seguros de vida</span></p>
+          <p class="stat"><span>Seguros de hogar</span></p>
+          <p class="stat"><span>Seguros multirriesgo</span></p>
         </div>
       </div>
     </section>
@@ -1439,7 +1440,6 @@ dialog::backdrop { background: rgb(10 18 51 / 55%); backdrop-filter: blur(3px); 
             <li><a href="tel:+573162492831"><span class="quick__icon"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg></span><span><small>Teléfono</small><span class="val">316 249 2831</span></span></a></li>
             <li><a href="mailto:Comercial@rgasesoriasyseguros.com.co"><span class="quick__icon"><svg class="icon" aria-hidden="true"><use href="#i-shield"/></svg></span><span><small>Correo</small><span class="val">Comercial@rgasesoriasyseguros.com.co</span></span></a></li>
             <li><div><span class="quick__icon"><svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg></span><span><small>Horario</small><span class="val">Lunes a viernes, 8:00 a.m. – 5:30 p.m.</span></span></div></li>
-            <li><div><span class="quick__icon"><svg class="icon" aria-hidden="true"><use href="#i-life"/></svg></span><span><small>Dirección (solo envíos)</small><span class="val">Calle 14 A No. 16 – 47, Valledupar – Cesar</span></span></div></li>
           </ul>
           <button class="btn btn--line btn--block" type="button" data-rgai-open style="margin-top:14px"><svg class="icon" aria-hidden="true"><use href="#i-spark"/></svg>¿Duda rápida? Pregúntale a RG AI</button>
         </div>
@@ -1555,7 +1555,7 @@ dialog::backdrop { background: rgb(10 18 51 / 55%); backdrop-filter: blur(3px); 
         <h2>1. Responsable del tratamiento</h2>
         <ul>
           <li><strong>Razón social:</strong> RG Asesorías y Seguros Ltda.</li>
-          <li><strong>NIT:</strong> [pendiente de completar]</li>
+          <li><strong>NIT:</strong> 900871243-4</li>
           <li><strong>Dirección de correspondencia:</strong> Calle 14 A No. 16 – 47, Valledupar – Cesar</li>
           <li><strong>Correo electrónico:</strong> <a href="mailto:Comercial@rgasesoriasyseguros.com.co">Comercial@rgasesoriasyseguros.com.co</a></li>
           <li><strong>Teléfonos:</strong> <a href="tel:+573165268039">316 526 8039</a> – <a href="tel:+573162492831">316 249 2831</a></li>
@@ -1644,12 +1644,11 @@ dialog::backdrop { background: rgb(10 18 51 / 55%); backdrop-filter: blur(3px); 
           <li><a href="tel:+573162492831">Teléfono: 316 249 2831</a></li>
           <li><a href="mailto:Comercial@rgasesoriasyseguros.com.co">Comercial@rgasesoriasyseguros.com.co</a></li>
           <li>Lunes a viernes, 8:00 a.m. – 5:30 p.m.</li>
-          <li>Calle 14 A No. 16 – 47, Valledupar – Cesar (solo envíos)</li>
         </ul>
       </div>
     </div>
     <div class="site-footer__bottom">
-      <span>© <span data-year>2026</span> RG Asesorías y Seguros Ltda. Todos los derechos reservados.</span>
+      <span>© <span data-year>2026</span> RG Asesorías y Seguros Ltda. · NIT 900871243-4 · Todos los derechos reservados.</span>
       <span>Hecho en Valledupar, Colombia</span>
     </div>
   </footer>
@@ -1684,7 +1683,7 @@ dialog::backdrop { background: rgb(10 18 51 / 55%); backdrop-filter: blur(3px); 
     <p class="rgai__foot">RG AI es un asistente automático: orienta, pero puede equivocarse y no emite cotizaciones ni pólizas. No compartas datos sensibles. Para una asesoría formal, <a href="https://wa.me/573165268039?text=Hola,%20quiero%20recibir%20asesor%C3%ADa%20sobre%20seguros" target="_blank" rel="noopener">habla con un asesor</a>.</p>
   </section>
 
-  <script type="application/json" id="catalogo">[{"id":"movilidad","cat":"Personas y familias","nombre":"Seguro de Movilidad","lead":"Protege tu vehículo y tu tranquilidad.","texto":"Este seguro cubre daños o pérdidas que puedan afectar tu automóvil, motocicleta o bicicleta, así como posibles afectaciones a terceros.","arte":"car","tono":"petroleo"},{"id":"hogar","cat":"Personas y familias","nombre":"Seguro de Hogar","lead":"Protección para tu vivienda y tus bienes.","texto":"Este seguro cubre daños o pérdidas materiales que puedan afectar tu hogar y los bienes que se encuentran en él.","arte":"home","tono":"rey"},{"id":"salud","cat":"Personas y familias","nombre":"Seguro de Salud","lead":"Accede a servicios médicos de alta calidad para ti y tu familia ante cualquier eventualidad de salud.","texto":"Incluye cobertura hospitalaria y ambulatoria.","arte":"health","tono":"oro"},{"id":"vida","cat":"Personas y familias","nombre":"Seguro de Vida","lead":"Tranquilidad para tu familia.","texto":"Un seguro que combina protección y tranquilidad para tu familia en caso de fallecimiento o accidente.","arte":"life","tono":"navy"},{"id":"educativo","cat":"Personas y familias","nombre":"Seguro Educativo","lead":"Asegura su futuro educativo.","texto":"Garantiza el pago de la matrícula universitaria del beneficiario hasta por varios períodos académicos, asegurando su futuro educativo.","arte":"edu","tono":"navy"},{"id":"accidentes","cat":"Personas y familias","nombre":"Seguro de Accidentes","lead":"Respaldo ante lo inesperado.","texto":"Protección económica en caso de que ocurra un accidente inesperado.","arte":"aid","tono":"petroleo"},{"id":"multirriesgo","cat":"Empresas","nombre":"Seguro Empresarial Multirriesgo","lead":"Protege la operación de tu negocio.","texto":"Una solución diseñada para proteger tu empresa frente a riesgos como daños materiales, pérdidas o eventos que afecten la operación del negocio.","arte":"building","tono":"indigo"},{"id":"responsabilidad-civil","cat":"Empresas","nombre":"Seguro de Responsabilidad Civil","lead":"Tu patrimonio, protegido frente a terceros.","texto":"Protege el patrimonio de tu empresa frente a daños ocasionados a terceros.","arte":"scale","tono":"rey"},{"id":"cumplimiento","cat":"Empresas","nombre":"Seguro de Cumplimiento","lead":"Respaldo para tus contratos.","texto":"Garantiza las obligaciones derivadas de contratos con entidades públicas o privadas.","arte":"doc","tono":"oro"},{"id":"transporte","cat":"Empresas","nombre":"Seguro de Transporte","lead":"Tu mercancía, protegida en el camino.","texto":"Protege mercancías y valores durante su movilización o traslado.","arte":"truck","tono":"navy"},{"id":"vida-grupo","cat":"Empresas","nombre":"Vida Grupo","lead":"Protección para tu equipo de trabajo.","texto":"Seguro colectivo que protege a los colaboradores de una empresa.","arte":"group","tono":"petroleo"},{"id":"arl","cat":"Empresas","nombre":"ARL","lead":"Riesgos laborales cubiertos.","texto":"Sistema de protección para empleados frente a riesgos laborales.","arte":"helmet","tono":"indigo"}]</script>
+  <script type="application/json" id="catalogo">[{"id":"movilidad","cat":"Personas y familias","nombre":"Seguro de Movilidad","lead":"Protege tu vehículo y tu tranquilidad.","texto":"Este seguro cubre daños o pérdidas que puedan afectar tu automóvil, motocicleta o bicicleta, así como posibles afectaciones a terceros.","arte":"car","tono":"petroleo"},{"id":"hogar","cat":"Personas y familias","nombre":"Seguro de Hogar","lead":"Protección para tu vivienda y tus bienes.","texto":"Este seguro cubre daños o pérdidas materiales que puedan afectar tu hogar y los bienes que se encuentran en él.","arte":"home","tono":"rey"},{"id":"salud","cat":"Personas y familias","nombre":"Seguro de Salud","lead":"Accede a servicios médicos preferenciales para ti y tu familia, con medicina preventiva y ante cualquier eventualidad.","texto":"Incluye cobertura hospitalaria y ambulatoria.","arte":"health","tono":"oro"},{"id":"vida","cat":"Personas y familias","nombre":"Seguro de Vida","lead":"Tranquilidad para ti y tu familia","texto":"en caso de invalidez, incapacidad total y/o permanente, enfermedades graves o fallecimiento.","arte":"life","tono":"navy"},{"id":"educativo","cat":"Personas y familias","nombre":"Seguro Educativo","lead":"Puedes garantizarles la oportunidad de estudiar la carrera que sueñan, en la universidad de su preferencia.","texto":"Asegura el valor de toda su carrera universitaria. Adquiere el seguro por semestres.","arte":"edu","tono":"navy"},{"id":"accidentes","cat":"Personas y familias","nombre":"Seguro de Accidentes Personales","lead":"Protege a estudiantes o equipos en excursiones, salidas pedagógicas y actividades grupales,","texto":"con cobertura para gastos médicos por accidentes y fallecimiento accidental.","arte":"aid","tono":"petroleo"},{"id":"multirriesgo","cat":"Empresas","nombre":"Seguro Empresarial Multirriesgo","lead":"Protege la operación de tu negocio.","texto":"Una solución diseñada para proteger tu empresa frente a riesgos como daños materiales, pérdidas o eventos que afecten la operación del negocio.","arte":"building","tono":"indigo"},{"id":"responsabilidad-civil","cat":"Empresas","nombre":"Seguro de Responsabilidad Civil","lead":"Tu patrimonio, protegido frente a terceros.","texto":"Protege el patrimonio de tu empresa frente a daños ocasionados a terceros.","arte":"scale","tono":"rey"},{"id":"cumplimiento","cat":"Empresas","nombre":"Seguro de Cumplimiento","lead":"Respaldo para tus contratos.","texto":"Garantiza las obligaciones derivadas de contratos con entidades públicas o privadas.","arte":"doc","tono":"oro"},{"id":"transporte","cat":"Empresas","nombre":"Seguro de Transporte","lead":"Tu mercancía, protegida en el camino.","texto":"Protege mercancías y valores durante su movilización o traslado.","arte":"truck","tono":"navy"},{"id":"vida-grupo","cat":"Empresas","nombre":"Vida Grupo","lead":"Protección para tu equipo de trabajo.","texto":"Seguro colectivo que protege a los colaboradores de una empresa.","arte":"group","tono":"petroleo"},{"id":"arl","cat":"Empresas","nombre":"ARL","lead":"Riesgos laborales cubiertos.","texto":"Sistema de protección para empleados frente a riesgos laborales.","arte":"helmet","tono":"indigo"}]</script>
   <script>
 (function () {
   var IMG = {
