@@ -795,6 +795,18 @@ dialog::backdrop { background: rgb(10 18 51 / 55%); backdrop-filter: blur(3px); 
 /* El brillo amarillo queda en la esquina: sobre fotos claras no debe teñir las caras */
 .hero .blob--1 { right: -24vmin; top: -18vmin; opacity: .5; }
 .story img, .gallery img { object-position: 50% 15%; }
+.pol__resp { padding: 14px 16px; background: var(--mist, #f4f5f9); border-left: 4px solid var(--yellow); font-size: .92rem; line-height: 1.6; }
+.pol__item { border-bottom: 1px solid rgb(17 22 51 / 12%); }
+.pol__item summary { cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 16px 0; font: 600 1.02rem/1.25 var(--display); color: var(--navy); }
+.pol__item summary::-webkit-details-marker { display: none; }
+.pol__item summary::after { content: "+"; font-size: 1.4rem; line-height: 1; }
+.pol__item[open] summary::after { content: "–"; }
+.pol__item > :not(summary) { margin-top: 0; padding-bottom: 14px; }
+.pol-dlg { width: min(720px, calc(100vw - 24px)); max-height: calc(100vh - 32px); border-radius: 20px; overflow: auto; }
+.pol-dlg__head { position: sticky; top: 0; z-index: 1; display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 18px 22px; background: var(--navy); color: #fff; }
+.pol-dlg__head h2 { margin: 0; font: 600 1.15rem/1.2 var(--display); color: #fff; }
+.pol-dlg__head button { width: 38px; height: 38px; border: 1px solid rgb(255 255 255 / 40%); border-radius: 50%; background: none; color: #fff; font-size: 1.3rem; cursor: pointer; }
+.pol-dlg .pol { padding: 6px 22px 22px; max-width: none; }
 
 </style>
 </head>
@@ -1537,66 +1549,52 @@ dialog::backdrop { background: rgb(10 18 51 / 55%); backdrop-filter: blur(3px); 
         </div>
       </div>
     </section>
-  
-
-    <section id="politica" class="page-top" aria-labelledby="titulo-politica">
-      <div class="wrap">
-        <h2 class="h-big" id="titulo-politica" style="margin-bottom:14px">Política de tratamiento de <span class="hl">datos personales</span></h2>
-        <p>Información sobre cómo tratamos los datos que nos compartes a través de este sitio web.</p>
-      </div>
-    </section>
-
-    <section class="section wrap">
-      <div class="prose">
-        <!-- BORRADOR: este texto debe ser revisado y aprobado por RG Asesorías y Seguros Ltda.
-             (y su asesor jurídico) antes de publicar el sitio. Completar los datos entre corchetes. -->
-        <p class="notice"><strong>Documento en revisión.</strong> Esta política está pendiente de aprobación por parte de RG Asesorías y Seguros Ltda. Si tienes preguntas sobre el tratamiento de tus datos, escríbenos a <a href="mailto:Comercial@rgasesoriasyseguros.com.co">Comercial@rgasesoriasyseguros.com.co</a>.</p>
-
-        <h2>1. Responsable del tratamiento</h2>
-        <ul>
-          <li><strong>Razón social:</strong> RG Asesorías y Seguros Ltda.</li>
-          <li><strong>NIT:</strong> 900871243-4</li>
-          <li><strong>Dirección de correspondencia:</strong> Calle 14 A No. 16 – 47, Valledupar – Cesar</li>
-          <li><strong>Correo electrónico:</strong> <a href="mailto:Comercial@rgasesoriasyseguros.com.co">Comercial@rgasesoriasyseguros.com.co</a></li>
-          <li><strong>Teléfonos:</strong> <a href="tel:+573165268039">316 526 8039</a> – <a href="tel:+573162492831">316 249 2831</a></li>
-        </ul>
-
-        <h2>2. Marco legal</h2>
-        <p>Esta política se adopta en cumplimiento de la Ley Estatutaria 1581 de 2012, el Decreto 1377 de 2013 (compilado en el Decreto Único 1074 de 2015) y demás normas que los modifiquen o complementen.</p>
-
-        <h2>3. Datos que recolectamos en este sitio</h2>
-        <p>A través del formulario de contacto recolectamos: nombre, apellido, correo electrónico, número de teléfono y el mensaje que decidas escribir. No solicitamos datos sensibles a través de este sitio web; te pedimos no incluirlos en el mensaje.</p>
-
-        <h2>4. Finalidades del tratamiento</h2>
-        <ul>
-          <li>Responder tus solicitudes de información, asesoría o cotización de seguros.</li>
-          <li>Contactarte por teléfono, WhatsApp o correo electrónico en relación con la solicitud que realizaste.</li>
-          <li>Llevar un registro de las solicitudes recibidas para su seguimiento.</li>
-          <li>[Otras finalidades que la empresa defina, por ejemplo envío de información comercial, solo con autorización expresa.]</li>
-        </ul>
-
-        <h2>5. Derechos del titular</h2>
-        <p>Como titular de los datos tienes derecho a:</p>
-        <ul>
-          <li>Conocer, actualizar y rectificar tus datos personales.</li>
-          <li>Solicitar prueba de la autorización otorgada.</li>
-          <li>Ser informado sobre el uso que se ha dado a tus datos.</li>
-          <li>Presentar quejas ante la Superintendencia de Industria y Comercio por infracciones a la ley.</li>
-          <li>Revocar la autorización y/o solicitar la supresión de tus datos cuando no exista un deber legal o contractual de conservarlos.</li>
-          <li>Acceder en forma gratuita a tus datos personales.</li>
-        </ul>
-
-        <h2>6. Consultas y reclamos</h2>
-        <p>Puedes ejercer tus derechos escribiendo a <a href="mailto:Comercial@rgasesoriasyseguros.com.co">Comercial@rgasesoriasyseguros.com.co</a>. Las consultas se atenderán en un máximo de diez (10) días hábiles y los reclamos en un máximo de quince (15) días hábiles, en los términos previstos por la Ley 1581 de 2012.</p>
-
-        <h2>7. Seguridad y conservación</h2>
-        <p>Adoptamos medidas técnicas y administrativas razonables para proteger tus datos contra acceso no autorizado, pérdida o alteración. Conservaremos la información durante el tiempo necesario para cumplir las finalidades descritas. [Plazo de conservación pendiente de definir.]</p>
-
-        <h2>8. Vigencia</h2>
-        <p>Esta política rige a partir del [fecha de aprobación pendiente].</p>
-      </div>
-    </section>
   </main>
+<dialog class="pol-dlg" id="politica" aria-labelledby="titulo-politica"><div class="pol-dlg__head"><h2 id="titulo-politica">Tratamiento de datos personales</h2><button type="button" data-cerrar-pol aria-label="Cerrar">×</button></div><div class="prose pol">
+        <!-- BORRADOR: texto pendiente de revisión y aprobación por RG Asesorías y Seguros Ltda. (y su asesor jurídico). -->
+        <p class="pol__resp"><strong>Responsable:</strong> RG Asesorías y Seguros Ltda. · NIT 900871243-4 · Valledupar, Cesar<br>
+          <a href="mailto:Comercial@rgasesoriasyseguros.com.co">Comercial@rgasesoriasyseguros.com.co</a> · <a href="tel:+573165268039">316 526 8039</a> · <a href="tel:+573162492831">316 249 2831</a></p>
+
+        <details class="pol__item" open>
+          <summary>¿Qué datos recolectamos?</summary>
+          <p>Nombre, apellido, correo, teléfono y el mensaje que escribas en el formulario. No pedimos datos sensibles; por favor no los incluyas en el mensaje.</p>
+        </details>
+        <details class="pol__item">
+          <summary>¿Para qué los usamos?</summary>
+          <ul>
+            <li>Responder tus solicitudes de información, asesoría o cotización.</li>
+            <li>Contactarte por teléfono, WhatsApp o correo sobre esa solicitud.</li>
+            <li>Llevar el registro y seguimiento de las solicitudes.</li>
+          </ul>
+        </details>
+        <details class="pol__item">
+          <summary>Tus derechos</summary>
+          <ul>
+            <li>Conocer, actualizar y rectificar tus datos, y acceder a ellos gratis.</li>
+            <li>Pedir prueba de la autorización y saber cómo se han usado.</li>
+            <li>Revocar la autorización o pedir que se eliminen, si no hay un deber legal de conservarlos.</li>
+            <li>Presentar quejas ante la Superintendencia de Industria y Comercio.</li>
+          </ul>
+        </details>
+        <details class="pol__item">
+          <summary>Consultas y reclamos</summary>
+          <p>Escríbenos a <a href="mailto:Comercial@rgasesoriasyseguros.com.co">Comercial@rgasesoriasyseguros.com.co</a>. Respondemos consultas en máximo 10 días hábiles y reclamos en máximo 15 días hábiles.</p>
+        </details>
+        <details class="pol__item">
+          <summary>Seguridad y marco legal</summary>
+          <p>Protegemos tus datos con medidas técnicas y administrativas razonables y los conservamos solo el tiempo necesario para estas finalidades. Esta política cumple la Ley 1581 de 2012 y el Decreto 1377 de 2013 (Decreto 1074 de 2015).</p>
+        </details>
+      </div></dialog>
+<script>
+(function () {
+  var d = document.getElementById('politica');
+  function abrir(e) { if (e) e.preventDefault(); if (!d.open) d.showModal(); }
+  document.addEventListener('click', function (e) { var a = e.target.closest && e.target.closest('a[href="#politica"]'); if (a) abrir(e); });
+  d.querySelector('[data-cerrar-pol]').addEventListener('click', function () { d.close(); });
+  d.addEventListener('click', function (e) { if (e.target === d) d.close(); });
+  if (location.hash === '#politica') abrir();
+})();
+</script>
 
   <section class="perks" aria-label="Por qué RG">
     <div class="perks__grid">

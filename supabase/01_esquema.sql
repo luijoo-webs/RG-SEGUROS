@@ -51,6 +51,14 @@ create table if not exists public.solicitudes (
   ultimo_mensaje_at  timestamptz not null default now(),
   pendiente_equipo   boolean not null default true                     -- el cliente escribió y nadie ha respondido
 );
+-- Bandeja por reclamar y cierre con datos financieros (plan Pro)
+alter table public.solicitudes add column if not exists reclamada_at timestamptz;
+alter table public.solicitudes add column if not exists cerrada_at timestamptz;
+alter table public.solicitudes add column if not exists prima numeric(14, 0) check (prima is null or prima >= 0);       -- prima anual vendida (COP)
+alter table public.solicitudes add column if not exists comision numeric(14, 0) check (comision is null or comision >= 0); -- comisión de RG (COP)
+alter table public.solicitudes add column if not exists aseguradora text;
+alter table public.solicitudes add column if not exists motivo_cierre text;
+create index if not exists solicitudes_cerrada_idx on public.solicitudes (cerrada_at desc) where cerrada_at is not null;
 create index if not exists solicitudes_created_idx on public.solicitudes (created_at desc);
 create index if not exists solicitudes_email_idx on public.solicitudes (lower(email));
 
@@ -319,7 +327,8 @@ begin
     from public.solicitudes s left join public.perfiles p on p.id = s.asignado_a
     where (p_estado is null or p_estado = '' or (p_estado = 'abiertas' and s.estado in ('nueva', 'en_gestion', 'cotizada')) or s.estado = p_estado)
       and (p_asignado is null or p_asignado = '' or (p_asignado = 'mias' and s.asignado_a = auth.uid())
-           or (p_asignado = 'sin_asignar' and s.asignado_a is null))
+           or (p_asignado = 'sin_asignar' and s.asignado_a is null)
+           or (p_asignado = 'equipo' and s.asignado_a is not null and s.asignado_a <> auth.uid()))
       and (p_busqueda is null or p_busqueda = '' or
            (s.nombre || ' ' || s.apellido || ' ' || s.email || ' ' || s.telefono || ' ' || public.codigo(s.numero) || ' ' || array_to_string(s.seguros, ' '))
            ilike '%' || p_busqueda || '%')
@@ -328,7 +337,8 @@ begin
     'total', (select count(*) from base),
     'items', coalesce((select json_agg(x order by x.pendiente_equipo desc, x.ultimo_mensaje_at desc) from (
       select id, public.codigo(numero) as codigo, created_at, nombre, apellido, email, telefono, seguros, estado,
-             asignado_a, asignado_nombre, pendiente_equipo, ultimo_mensaje_at, n_mensajes
+             asignado_a, asignado_nombre, pendiente_equipo, ultimo_mensaje_at, n_mensajes, reclamada_at,
+             left(mensaje, 180) as mensaje
       from base order by pendiente_equipo desc, ultimo_mensaje_at desc
       limit least(greatest(p_limite, 1), 200) offset greatest(p_offset, 0)) x), '[]'::json))
   into v;
@@ -345,6 +355,9 @@ begin
     'nombre', s.nombre, 'apellido', s.apellido, 'email', s.email, 'telefono', s.telefono,
     'seguros', s.seguros, 'mensaje', s.mensaje, 'autorizacion_at', s.autorizacion_at,
     'estado', s.estado, 'asignado_a', s.asignado_a, 'pendiente_equipo', s.pendiente_equipo,
+    'asignado_nombre', (select nombre from public.perfiles where id = s.asignado_a),
+    'reclamada_at', s.reclamada_at, 'cerrada_at', s.cerrada_at, 'prima', s.prima, 'comision', s.comision,
+    'aseguradora', s.aseguradora, 'motivo_cierre', s.motivo_cierre,
     'otras', (select count(*) - 1 from public.solicitudes o where lower(o.email) = lower(s.email)),
     'mensajes', coalesce((select json_agg(json_build_object('id', m.id, 'autor', m.autor, 'interno', m.interno, 'texto', m.texto,
                           'fecha', m.created_at, 'por', p.nombre) order by m.created_at)
@@ -358,26 +371,147 @@ end $$;
 
 create or replace function public.panel_actualizar(p_id uuid, p_estado text default null, p_asignado_a uuid default null, p_quitar_asignacion boolean default false)
 returns json language plpgsql security definer set search_path = public as $$
-declare v_old public.solicitudes; v_nombre text;
+declare v_old public.solicitudes; v_nombre text; v_admin boolean := public.rol_actual() = 'admin';
 begin
   perform public.exigir_equipo();
   select * into v_old from public.solicitudes where id = p_id for update;
   if v_old.id is null then raise exception 'NO_EXISTE'; end if;
   if p_estado is not null and p_estado <> v_old.estado then
-    if p_estado not in ('nueva', 'en_gestion', 'cotizada', 'ganada', 'perdida') then raise exception 'ESTADO_INVALIDO'; end if;
-    update public.solicitudes set estado = p_estado, updated_at = now() where id = p_id;
+    if p_estado in ('ganada', 'perdida') then raise exception 'USA_CERRAR'; end if;
+    if p_estado not in ('nueva', 'en_gestion', 'cotizada') then raise exception 'ESTADO_INVALIDO'; end if;
+    if not v_admin and v_old.asignado_a is distinct from auth.uid() then raise exception 'NO_ES_TU_CASO'; end if;
+    -- reabrir un caso cerrado borra su cierre para no contarlo en finanzas
+    update public.solicitudes set estado = p_estado, updated_at = now(), cerrada_at = null,
+           prima = null, comision = null, aseguradora = null, motivo_cierre = null where id = p_id;
     insert into public.actividad (actor_id, solicitud_id, tipo, detalle) values (auth.uid(), p_id, 'estado', v_old.estado || ' → ' || p_estado);
   end if;
+  if (p_quitar_asignacion or p_asignado_a is not null) and not v_admin then raise exception 'NO_AUTORIZADO' using errcode = '42501'; end if;
   if p_quitar_asignacion and v_old.asignado_a is not null then
-    update public.solicitudes set asignado_a = null, updated_at = now() where id = p_id;
-    insert into public.actividad (actor_id, solicitud_id, tipo, detalle) values (auth.uid(), p_id, 'asignacion', 'Sin asignar');
+    update public.solicitudes set asignado_a = null, reclamada_at = null, updated_at = now() where id = p_id;
+    insert into public.actividad (actor_id, solicitud_id, tipo, detalle) values (auth.uid(), p_id, 'asignacion', 'Devuelta a la bandeja');
   elsif p_asignado_a is not null and p_asignado_a is distinct from v_old.asignado_a then
     select nombre into v_nombre from public.perfiles where id = p_asignado_a and rol in ('admin', 'asesor');
     if v_nombre is null then raise exception 'ASESOR_INVALIDO'; end if;
-    update public.solicitudes set asignado_a = p_asignado_a, updated_at = now() where id = p_id;
+    update public.solicitudes set asignado_a = p_asignado_a, reclamada_at = now(), updated_at = now(),
+           estado = case when estado = 'nueva' then 'en_gestion' else estado end where id = p_id;
     insert into public.actividad (actor_id, solicitud_id, tipo, detalle) values (auth.uid(), p_id, 'asignacion', 'Asignada a ' || v_nombre);
   end if;
   return json_build_object('ok', true);
+end $$;
+
+-- Reclamar: toma una solicitud de la bandeja (o la más antigua si p_id es null).
+-- Un asesor trabaja un caso a la vez: debe cotizarlo o cerrarlo antes de reclamar otro.
+create or replace function public.panel_reclamar(p_id uuid default null)
+returns json language plpgsql security definer set search_path = public as $$
+declare v_id uuid; v_cod text;
+begin
+  perform public.exigir_equipo();
+  if public.rol_actual() <> 'admin' and exists (
+      select 1 from public.solicitudes where asignado_a = auth.uid() and estado in ('nueva', 'en_gestion')) then
+    raise exception 'TERMINA_TU_CASO';
+  end if;
+  select id into v_id from public.solicitudes
+   where asignado_a is null and estado in ('nueva', 'en_gestion', 'cotizada') and (p_id is null or id = p_id)
+   order by created_at limit 1 for update skip locked;
+  if v_id is null then
+    if p_id is not null then raise exception 'YA_RECLAMADA'; end if;
+    return json_build_object('ok', false, 'motivo', 'bandeja_vacia');
+  end if;
+  update public.solicitudes set asignado_a = auth.uid(), reclamada_at = now(), updated_at = now(),
+         estado = case when estado = 'nueva' then 'en_gestion' else estado end
+   where id = v_id returning public.codigo(numero) into v_cod;
+  insert into public.actividad (actor_id, solicitud_id, tipo, detalle) values (auth.uid(), v_id, 'reclamada', v_cod);
+  return json_build_object('ok', true, 'id', v_id);
+end $$;
+
+-- Soltar: devuelve el caso a la bandeja (quien lo tiene o la administración)
+create or replace function public.panel_soltar(p_id uuid)
+returns json language plpgsql security definer set search_path = public as $$
+begin
+  perform public.exigir_equipo();
+  if public.rol_actual() <> 'admin' and not exists (select 1 from public.solicitudes where id = p_id and asignado_a = auth.uid()) then
+    raise exception 'NO_ES_TU_CASO';
+  end if;
+  update public.solicitudes set asignado_a = null, reclamada_at = null, updated_at = now() where id = p_id and estado in ('nueva', 'en_gestion', 'cotizada');
+  if not found then raise exception 'NO_EXISTE'; end if;
+  insert into public.actividad (actor_id, solicitud_id, tipo, detalle) values (auth.uid(), p_id, 'soltada', 'Devuelta a la bandeja');
+  return json_build_object('ok', true);
+end $$;
+
+-- Cerrar: venta (con prima, comisión y aseguradora) o sin venta (con motivo)
+create or replace function public.panel_cerrar(p_id uuid, p_resultado text, p_prima numeric default null, p_comision numeric default null,
+                                               p_aseguradora text default null, p_motivo text default null)
+returns json language plpgsql security definer set search_path = public as $$
+declare v public.solicitudes; v_aseg text := public.limpiar(p_aseguradora, 80); v_mot text := public.limpiar(p_motivo, 300);
+begin
+  perform public.exigir_equipo();
+  select * into v from public.solicitudes where id = p_id for update;
+  if v.id is null then raise exception 'NO_EXISTE'; end if;
+  if public.rol_actual() <> 'admin' and v.asignado_a is distinct from auth.uid() then raise exception 'NO_ES_TU_CASO'; end if;
+  if p_resultado = 'ganada' then
+    if p_prima is null or p_prima <= 0 or p_prima > 100000000000 then raise exception 'PRIMA_INVALIDA'; end if;
+    if p_comision is null or p_comision < 0 or p_comision > p_prima then raise exception 'COMISION_INVALIDA'; end if;
+    if v_aseg = '' then raise exception 'FALTA_ASEGURADORA'; end if;
+  elsif p_resultado = 'perdida' then
+    if v_mot = '' then raise exception 'FALTA_MOTIVO'; end if;
+  else
+    raise exception 'ESTADO_INVALIDO';
+  end if;
+  update public.solicitudes set
+    estado = p_resultado, cerrada_at = now(), updated_at = now(), pendiente_equipo = false,
+    asignado_a = coalesce(asignado_a, auth.uid()), reclamada_at = coalesce(reclamada_at, now()),
+    prima = case when p_resultado = 'ganada' then round(p_prima) end,
+    comision = case when p_resultado = 'ganada' then round(p_comision) end,
+    aseguradora = case when p_resultado = 'ganada' then v_aseg end,
+    motivo_cierre = nullif(v_mot, '')
+  where id = p_id;
+  insert into public.actividad (actor_id, solicitud_id, tipo, detalle)
+  values (auth.uid(), p_id, 'cerrada', case when p_resultado = 'ganada' then 'Venta · ' || v_aseg else 'Sin venta · ' || v_mot end);
+  return json_build_object('ok', true);
+end $$;
+
+-- Finanzas (solo admin): ventas, primas y comisiones registradas al cerrar
+create or replace function public.panel_finanzas(p_dias integer default 365)
+returns json language plpgsql stable security definer set search_path = public as $$
+declare v_desde timestamptz := now() - make_interval(days => least(greatest(p_dias, 1), 1825)); v json;
+begin
+  perform public.exigir_admin();
+  with c as (select * from public.solicitudes where cerrada_at >= v_desde),
+       g as (select * from c where estado = 'ganada')
+  select json_build_object(
+    'ventas', (select count(*) from g),
+    'primas', (select coalesce(sum(prima), 0) from g),
+    'comisiones', (select coalesce(sum(comision), 0) from g),
+    'ticket', (select round(avg(prima)) from g),
+    'pct_comision', (select round(100.0 * sum(comision) / nullif(sum(prima), 0), 1) from g),
+    'perdidas', (select count(*) from c where estado = 'perdida'),
+    'tasa_cierre', (select round(100.0 * count(*) filter (where estado = 'ganada') / nullif(count(*), 0), 1) from c),
+    'cotizadas', (select count(*) from public.solicitudes where estado = 'cotizada'),
+    'en_gestion', (select count(*) from public.solicitudes where estado in ('nueva', 'en_gestion') and asignado_a is not null),
+    'por_mes', coalesce((select json_agg(json_build_object('mes', to_char(m, 'YYYY-MM'), 'ventas', coalesce(x.ventas, 0),
+                          'primas', coalesce(x.primas, 0), 'comisiones', coalesce(x.comisiones, 0)) order by m)
+        from generate_series(date_trunc('month', now() at time zone 'America/Bogota') - interval '11 months',
+                             date_trunc('month', now() at time zone 'America/Bogota'), interval '1 month') m
+        left join (select date_trunc('month', cerrada_at at time zone 'America/Bogota') mm, count(*) ventas, sum(prima) primas, sum(comision) comisiones
+                   from public.solicitudes where estado = 'ganada' group by 1) x on x.mm = m), '[]'::json),
+    'por_aseguradora', coalesce((select json_agg(x order by x.comisiones desc) from (
+        select aseguradora, count(*) ventas, sum(prima) primas, sum(comision) comisiones from g group by aseguradora) x), '[]'::json),
+    'por_asesor', coalesce((select json_agg(x order by x.comisiones desc nulls last) from (
+        select p.nombre, count(c.id) filter (where c.estado = 'ganada') ventas, count(c.id) filter (where c.estado = 'perdida') perdidas,
+               coalesce(sum(c.prima) filter (where c.estado = 'ganada'), 0) primas, coalesce(sum(c.comision) filter (where c.estado = 'ganada'), 0) comisiones,
+               round((extract(epoch from avg(c.cerrada_at - c.reclamada_at)) / 3600)::numeric, 1) resolucion_horas
+        from public.perfiles p left join c on c.asignado_a = p.id
+        where p.rol in ('admin', 'asesor') group by p.id, p.nombre) x), '[]'::json),
+    'por_seguro', coalesce((select json_agg(json_build_object('seguro', seguro, 'n', n) order by n desc) from (
+        select unnest(seguros) seguro, count(*) n from g group by 1 order by 2 desc limit 12) t), '[]'::json),
+    'motivos', coalesce((select json_agg(json_build_object('motivo', motivo_cierre, 'n', n) order by n desc) from (
+        select motivo_cierre, count(*) n from c where estado = 'perdida' group by 1 order by 2 desc limit 8) t), '[]'::json),
+    'lista', coalesce((select json_agg(x order by x.fecha desc) from (
+        select public.codigo(g.numero) codigo, g.cerrada_at fecha, g.nombre || ' ' || g.apellido cliente, g.seguros, g.aseguradora,
+               g.prima, g.comision, p.nombre asesor
+        from g left join public.perfiles p on p.id = g.asignado_a order by g.cerrada_at desc limit 300) x), '[]'::json)
+  ) into v;
+  return v;
 end $$;
 
 create or replace function public.panel_enviar_mensaje(p_id uuid, p_texto text, p_interno boolean default false)
@@ -395,6 +529,7 @@ begin
       ultimo_mensaje_at = now(), pendiente_equipo = false, updated_at = now(),
       primera_respuesta_at = coalesce(primera_respuesta_at, now()),
       estado = case when estado = 'nueva' then 'en_gestion' else estado end,
+      reclamada_at = case when asignado_a is null then now() else reclamada_at end,
       asignado_a = coalesce(asignado_a, auth.uid())
     where id = p_id;
   end if;
@@ -469,6 +604,9 @@ begin
     'dias', p_dias,
     'total', (select count(*) from s),
     'abiertas', (select count(*) from public.solicitudes where estado in ('nueva', 'en_gestion', 'cotizada')),
+    'en_cola', (select count(*) from public.solicitudes where asignado_a is null and estado in ('nueva', 'en_gestion', 'cotizada')),
+    'resolucion_horas', (select round((extract(epoch from avg(cerrada_at - coalesce(reclamada_at, created_at))) / 3600)::numeric, 1) from s where cerrada_at is not null),
+    'comisiones', (select coalesce(sum(comision), 0) from public.solicitudes where estado = 'ganada' and cerrada_at >= v_desde),
     'sin_responder', (select count(*) from public.solicitudes where pendiente_equipo and estado in ('nueva', 'en_gestion', 'cotizada')),
     'ganadas', (select count(*) from s where estado = 'ganada'),
     'perdidas', (select count(*) from s where estado = 'perdida'),
@@ -486,6 +624,7 @@ begin
         select unnest(seguros) seguro, count(*) n from s group by 1 order by 2 desc limit 12) t), '[]'::json),
     'por_asesor', coalesce((select json_agg(x order by x.asignadas desc) from (
         select p.nombre, count(s.id) asignadas, count(s.id) filter (where s.estado = 'ganada') ganadas,
+               (select count(*) from public.solicitudes a where a.asignado_a = p.id and a.estado in ('nueva', 'en_gestion', 'cotizada')) activos,
                round((extract(epoch from avg(s.primera_respuesta_at - s.created_at)) / 3600)::numeric, 1) as respuesta_horas
         from public.perfiles p left join s on s.asignado_a = p.id
         where p.rol in ('admin', 'asesor') group by p.id, p.nombre) x), '[]'::json)
@@ -567,7 +706,7 @@ begin
              'crear_solicitud', 'caso_ver', 'caso_responder', 'rg_ai_registrar', 'datos_notificacion', 'dentro_del_limite',
              'panel_yo', 'panel_solicitudes', 'panel_solicitud', 'panel_actualizar', 'panel_enviar_mensaje', 'panel_marcar_atendida',
              'panel_registrar_contacto', 'panel_clientes', 'panel_actividad', 'panel_resumen', 'panel_equipo', 'panel_cambiar_rol',
-             'panel_eliminar_solicitud', 'exigir_equipo', 'exigir_admin', 'crear_perfil', 'cliente_resumen', 'cliente_actualizar')
+             'panel_eliminar_solicitud', 'panel_reclamar', 'panel_soltar', 'panel_cerrar', 'panel_finanzas', 'exigir_equipo', 'exigir_admin', 'crear_perfil', 'cliente_resumen', 'cliente_actualizar')
   loop
     execute format('revoke all on function %s from public, anon, authenticated', f);
   end loop;
@@ -592,6 +731,10 @@ grant execute on function public.panel_resumen(integer) to authenticated;
 grant execute on function public.panel_equipo() to authenticated;
 grant execute on function public.panel_cambiar_rol(uuid, text, text) to authenticated;
 grant execute on function public.panel_eliminar_solicitud(uuid) to authenticated;
+grant execute on function public.panel_reclamar(uuid) to authenticated;
+grant execute on function public.panel_soltar(uuid) to authenticated;
+grant execute on function public.panel_cerrar(uuid, text, numeric, numeric, text, text) to authenticated;
+grant execute on function public.panel_finanzas(integer) to authenticated;
 -- rg_ai_registrar y datos_notificacion: solo service_role (Edge Functions), que no necesita grant explícito en Supabase.
 grant execute on function public.rg_ai_registrar(text, integer, integer, integer, integer) to service_role;
 grant execute on function public.datos_notificacion(uuid) to service_role;
