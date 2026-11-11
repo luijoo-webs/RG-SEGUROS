@@ -93,11 +93,18 @@
         el('button', { class: 'btn', type: 'submit', text: 'Crear mi cuenta' }));
     }
 
-    pintar(el('section', { class: 'caso__card cuenta-acceso' },
-      el('p', { class: 'eyebrow', text: 'Mi cuenta' }),
-      el('h1', { class: 'h1', text: pestana === 'crear' ? 'Crea tu cuenta' : 'Ingresa a tu cuenta' }),
-      el('p', { class: 'muted', text: 'Consulta el estado de tus solicitudes, conversa con tu asesor y mantén tus datos al día.' }),
-      tabs, mensaje ? aviso('ok', mensaje) : null, form));
+    pintar(el('section', { class: 'acceso' },
+      el('div', { class: 'acceso__lado' },
+        el('p', { class: 'acceso__eyebrow', text: 'RG Asesorías y Seguros' }),
+        el('h2', { class: 'acceso__titulo', text: 'Tus seguros, en un solo lugar.' }),
+        el('ul', { class: 'acceso__lista' },
+          el('li', { text: 'Sigue el estado de cada solicitud' }),
+          el('li', { text: 'Conversa directo con tu asesor' }),
+          el('li', { text: 'Reporta un siniestro en minutos' }))),
+      el('div', { class: 'acceso__form' },
+        el('h1', { class: 'h1', text: pestana === 'crear' ? 'Crea tu cuenta' : 'Ingresa a tu cuenta' }),
+        el('p', { class: 'muted', text: pestana === 'crear' ? 'Usa el mismo correo con el que pediste tu cotización.' : 'Bienvenido de nuevo.' }),
+        tabs, mensaje ? aviso('ok', mensaje) : null, form)));
     var primero = form.querySelector('input'); if (primero) primero.focus();
   }
 
@@ -115,6 +122,16 @@
     } }, campo('n-clave', 'Nueva contraseña (mínimo 8 caracteres)', { type: 'password', autocomplete: 'new-password', required: true, minlength: 8 }), error,
       el('button', { class: 'btn', type: 'submit', text: 'Guardar contraseña' }));
     pintar(el('section', { class: 'caso__card' }, el('p', { class: 'eyebrow', text: 'Mi cuenta' }), el('h1', { class: 'h1', text: 'Crea una nueva contraseña' }), form));
+  }
+
+  var PASOS = [['nueva', 'Recibida'], ['en_gestion', 'En gestión'], ['cotizada', 'Cotizada'], ['fin', 'Cerrada']];
+  function progreso(estado) {
+    var actual = ['ganada', 'perdida'].indexOf(estado) >= 0 ? 'fin' : estado, ok = true;
+    return el('ol', { class: 'progreso', 'aria-label': 'Estado: ' + (ESTADOS[estado] || estado) }, PASOS.map(function (x) {
+      var c = x[0] === actual ? 'is-actual' : ok ? 'is-hecho' : '';
+      if (x[0] === actual) ok = false;
+      return el('li', { class: c }, el('i'), el('span', { text: x[1] }));
+    }));
   }
 
   // ---------- Con sesión ----------
@@ -136,7 +153,9 @@
       d.solicitudes.forEach(function (s) {
         lista.appendChild(el('article', { class: 'sol-card' },
           el('div', { class: 'sol-card__top' }, el('b', { text: s.codigo }), el('span', { class: 'pill pill--' + s.estado, text: ESTADOS[s.estado] || s.estado })),
-          el('p', { class: 'muted', text: (s.seguros.join(', ') || 'Asesoría general') + ' · ' + fecha(s.creada) }),
+          el('h3', { class: 'sol-card__titulo', text: s.seguros.join(', ') || 'Asesoría general' }),
+          el('p', { class: 'muted', style: 'margin:0', text: 'Enviada el ' + fecha(s.creada) }),
+          progreso(s.estado),
           el('p', { class: 'sol-card__meta' }, s.asesor ? 'Asesor: ' + s.asesor : 'Pronto te asignaremos un asesor',
             s.respuestas ? el('span', { class: 'sol-card__badge', text: s.respuestas + (s.respuestas === 1 ? ' respuesta' : ' respuestas') }) : null),
           el('a', { class: 'btn btn--sm', href: '../caso/#' + s.token, text: 'Ver conversación' })));
@@ -161,14 +180,30 @@
           el('button', { class: 'btn btn--line btn--sm', type: 'button', text: 'Cambiar contraseña', onclick: nuevaClave }),
           el('button', { class: 'btn btn--line btn--sm', type: 'button', text: 'Cerrar sesión', onclick: function () { sb.auth.signOut().then(function () { acceso('ingresar'); }); } })));
 
+      var sols = d.solicitudes || [];
+      var enCurso = sols.filter(function (s) { return ['nueva', 'en_gestion', 'cotizada'].indexOf(s.estado) >= 0; }).length;
+      var resp = sols.reduce(function (a, s) { return a + (s.respuestas || 0); }, 0);
+      var nombre = p.nombre || p.email || '';
       pintar(
-        el('section', { class: 'caso__card' },
-          el('p', { class: 'eyebrow', text: 'Mi cuenta' }),
-          el('h1', { class: 'h1', text: 'Hola' + (primerNombre ? ', ' + primerNombre : '') }),
-          mensaje ? aviso('ok', mensaje) : null,
-          el('h2', { class: 'label', style: 'margin-top:18px', text: '¿Qué quieres hacer hoy?' }), acciones),
-        el('section', { class: 'caso__card', 'aria-labelledby': 'mis-sol' }, el('h2', { class: 'eyebrow', id: 'mis-sol', text: 'Mis solicitudes' }), lista),
-        el('section', { class: 'caso__card', 'aria-labelledby': 'mis-datos' }, el('h2', { class: 'eyebrow', id: 'mis-datos', text: 'Mis datos' }), datos));
+        el('section', { class: 'cuenta-hero' },
+          el('div', { class: 'cuenta-hero__yo' },
+            el('span', { class: 'cuenta-hero__avatar', 'aria-hidden': 'true', text: (nombre.charAt(0) || 'R').toUpperCase() }),
+            el('div', {},
+              el('p', { class: 'cuenta-hero__eyebrow', text: 'Mi cuenta' }),
+              el('h1', { class: 'cuenta-hero__nombre', text: 'Hola' + (primerNombre ? ', ' + primerNombre : '') }),
+              el('p', { class: 'cuenta-hero__mail', text: p.email || '' }))),
+          el('div', { class: 'cuenta-hero__nums' },
+            el('div', {}, el('b', { text: String(sols.length) }), el('span', { text: 'Solicitudes' })),
+            el('div', {}, el('b', { text: String(enCurso) }), el('span', { text: 'En curso' })),
+            el('div', {}, el('b', { text: String(resp) }), el('span', { text: 'Respuestas' })))),
+        mensaje ? aviso('ok', mensaje) : null,
+        el('div', { class: 'cuenta-grid' },
+          el('section', { class: 'caso__card', 'aria-labelledby': 'mis-sol' },
+            el('div', { class: 'cuenta-sec' }, el('h2', { id: 'mis-sol', text: 'Mis solicitudes' }), el('a', { class: 'btn btn--sm', href: '../#contacto', text: 'Nueva solicitud' })),
+            lista),
+          el('div', { class: 'cuenta-col' },
+            el('section', { class: 'caso__card' }, el('div', { class: 'cuenta-sec' }, el('h2', { text: '¿Qué necesitas?' })), acciones),
+            el('section', { class: 'caso__card', 'aria-labelledby': 'mis-datos' }, el('div', { class: 'cuenta-sec' }, el('h2', { id: 'mis-datos', text: 'Mis datos' })), datos))));
     }).catch(function () { pintar(aviso('error', 'No pudimos cargar tu cuenta. Vuelve a ingresar.')); setTimeout(function () { acceso('ingresar'); }, 1500); });
   }
 

@@ -167,7 +167,7 @@
     var side = el('aside', { class: 'adm__side', 'aria-label': 'Menú del panel' });
     side.appendChild(el('a', { class: 'adm__brand', href: '../' }, el('img', { src: '../assets/logo-rg.png', alt: '' }),
       el('span', {}, el('b', { text: 'RG' }), el('small', { text: 'Panel del equipo' }))));
-    var items = [['resumen', 'Resumen', true], ['finanzas', 'Finanzas', true], ['solicitudes', 'Solicitudes'], ['clientes', 'Clientes'], ['actividad', 'Actividad'], ['equipo', 'Equipo', true]];
+    var items = [['resumen', 'Resumen', true], ['finanzas', 'Finanzas', true], ['supervisar', 'Supervisar', true], ['solicitudes', 'Solicitudes'], ['clientes', 'Clientes'], ['actividad', 'Actividad'], ['equipo', 'Equipo', true]];
     badge = el('span', { class: 'badge', hidden: true });
     items.forEach(function (it) {
       if (it[2] && yo.rol !== 'admin') return;
@@ -194,7 +194,7 @@
     vista = v;
     Object.keys(nav).forEach(function (k) { if (k === v) nav[k].setAttribute('aria-current', 'page'); else nav[k].removeAttribute('aria-current'); });
     vaciar(main).appendChild(el('p', { class: 'muted', text: 'Cargando…' }));
-    var vistas = { resumen: verResumen, finanzas: verFinanzas, solicitudes: verSolicitudes, clientes: verClientes, actividad: verActividad, equipo: verEquipo };
+    var vistas = { resumen: verResumen, finanzas: verFinanzas, supervisar: verSupervisar, solicitudes: verSolicitudes, clientes: verClientes, actividad: verActividad, equipo: verEquipo };
     return (vistas[v] || verSolicitudes)(opciones).catch(falla);
   }
 
@@ -643,6 +643,60 @@
     document.body.appendChild(a); a.click(); a.remove();
   }
 
+  // ---------- Supervisar al equipo (solo admin) ----------
+  var diasSup = 30;
+  function verSupervisar() {
+    return Promise.all([
+      rpc('panel_resumen', { p_dias: diasSup }), rpc('panel_finanzas', { p_dias: diasSup }),
+      rpc('panel_solicitudes', { p_estado: 'abiertas', p_limite: 300 }), rpc('panel_equipo')
+    ]).then(function (r) {
+      var res = r[0], fin = r[1], abiertas = r[2].items;
+      var miembros = r[3].filter(function (m) { return m.rol === 'admin' || m.rol === 'asesor'; });
+      // shortcut: resumen y finanzas agrupan por nombre (no traen id); dos asesores con el mismo nombre se mezclarían.
+      var porNombre = function (lista) { var o = {}; lista.forEach(function (x) { o[x.nombre || ''] = x; }); return o; };
+      var rs = porNombre(res.por_asesor), fs = porNombre(fin.por_asesor);
+      var cola = abiertas.filter(function (s) { return !s.asignado_a; }).length;
+      var sel = el('select', { class: 'select', 'aria-label': 'Periodo', onchange: function () { diasSup = Number(this.value); ir('supervisar'); } },
+        [7, 30, 90, 365].map(function (d) { return el('option', { value: d, selected: d === diasSup, text: 'Últimos ' + d + ' días' }); }));
+      vaciar(main).appendChild(cabecera('Plan Pro · Equipo', 'Supervisar', sel));
+      var datos = miembros.map(function (m) {
+        var casos = abiertas.filter(function (s) { return s.asignado_a === m.id; });
+        var activo = casos.filter(function (s) { return s.estado !== 'cotizada'; })[0];
+        return { m: m, casos: casos, activo: activo, a: rs[m.nombre || ''] || {}, f: fs[m.nombre || ''] || {} };
+      });
+      var conCaso = datos.filter(function (d) { return d.activo; }).length;
+      main.appendChild(el('div', { class: 'kpis' },
+        el('div', { class: 'kpi' }, el('b', { text: String(miembros.length) }), el('span', { text: 'Personas en el equipo' })),
+        el('div', { class: 'kpi' }, el('b', { text: String(conCaso) }), el('span', { text: 'Trabajando un caso' })),
+        el('div', { class: 'kpi' }, el('b', { text: String(miembros.length - conCaso) }), el('span', { text: 'Libres' })),
+        el('div', { class: 'kpi' + (cola ? ' kpi--alerta' : '') }, el('b', { text: String(cola) }), el('span', { text: 'En la bandeja sin reclamar' }))));
+      var grid = el('div', { class: 'sup' });
+      datos.sort(function (x, y) { return (y.a.asignadas || 0) - (x.a.asignadas || 0); }).forEach(function (d) {
+        var nombre = d.m.nombre || d.m.email;
+        var largo = d.activo && d.activo.reclamada_at && (Date.now() - new Date(d.activo.reclamada_at)) > 864e5;
+        var estado = d.activo
+          ? el('p', { class: 'sup__estado' + (largo ? ' is-alerta' : ' is-ocupado') }, (largo ? 'Más de un día con ' : 'Trabajando en ') + d.activo.codigo + ' · ' + hace(d.activo.reclamada_at || d.activo.ultimo_mensaje_at))
+          : el('p', { class: 'sup__estado' }, 'Libre para reclamar');
+        var num = function (n, t) { return el('div', {}, el('b', { text: n == null ? '—' : String(n) }), el('span', { text: t })); };
+        grid.appendChild(el('article', { class: 'sup__card' },
+          el('div', { class: 'sup__top' },
+            el('span', { class: 'adm__avatar', 'aria-hidden': 'true', text: nombre.charAt(0).toUpperCase() }),
+            el('div', {}, el('b', { text: nombre }), el('small', { class: 'muted', text: d.m.rol === 'admin' ? 'Administración' : 'Asesor' }))),
+          estado,
+          el('div', { class: 'sup__nums' },
+            num(d.a.asignadas, 'Reclamadas'), num(d.casos.length, 'Abiertas ahora'),
+            num(d.f.ventas, 'Ventas'), num(d.f.perdidas, 'Sin venta'),
+            num(plata(d.f.comisiones, true), 'Comisiones'), num(d.a.respuesta_horas == null ? null : d.a.respuesta_horas + ' h', '1.ª respuesta'),
+            num(horas(d.f.resolucion_horas), 'Resolución')),
+          d.casos.length ? el('div', { class: 'chips' }, d.casos.map(function (s) {
+            return el('button', { class: 'chip chip--btn', type: 'button', title: s.nombre + ' ' + s.apellido + ' · ' + ESTADOS[s.estado], text: s.codigo + ' · ' + ESTADOS[s.estado],
+              onclick: function () { modo = 'bandeja'; seleccion = s.id; ir('solicitudes'); } });
+          })) : null));
+      });
+      main.appendChild(miembros.length ? grid : el('div', { class: 'empty', text: 'Aún no hay asesores. Créalos en Equipo.' }));
+    });
+  }
+
   // ---------- Clientes ----------
   function verClientes() {
     var q = el('input', { class: 'input', type: 'search', placeholder: 'Buscar cliente', 'aria-label': 'Buscar cliente' });
@@ -749,7 +803,7 @@
       if (vista === 'solicitudes') {
         if (seleccion) abrirDetalle(seleccion);
         if (modo === 'bandeja' && !seleccion) pintarBandeja().catch(falla); else cargarLista().catch(falla);
-      } else if (vista === 'resumen' || vista === 'actividad' || vista === 'finanzas') ir(vista);
+      } else if (vista === 'resumen' || vista === 'actividad' || vista === 'finanzas' || vista === 'supervisar') ir(vista);
     }, 400);
   }
   function escucharCambios() {
