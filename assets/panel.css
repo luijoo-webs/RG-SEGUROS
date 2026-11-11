@@ -76,9 +76,15 @@ a { color: var(--navy); }
 .adm__nav:hover { background: rgb(255 255 255 / 7%); color: #fff; }
 .adm__nav[aria-current="page"] { background: rgb(247 220 41 / 14%); color: var(--yellow); }
 .adm__nav .badge { margin-left: auto; min-width: 20px; padding: 3px 6px; border-radius: 10px; background: var(--yellow); color: var(--ink); font-size: .65rem; text-align: center; letter-spacing: 0; }
-.adm__me { margin-top: auto; padding: 14px 12px 0; border-top: 1px solid rgb(255 255 255 / 12%); font-size: .82rem; }
-.adm__me b { display: block; color: #fff; }
-.adm__me .live { display: inline-flex; align-items: center; gap: 6px; margin: 8px 0 10px; font-size: .7rem; color: #aab1cf; }
+.adm__me { margin-top: auto; display: grid; gap: 12px; padding: 14px; border-radius: 14px; background: rgb(255 255 255 / 6%); font-size: .82rem; }
+.adm__who { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.adm__who > div { min-width: 0; }
+.adm__avatar { flex: none; display: grid; place-items: center; width: 38px; height: 38px; border-radius: 50%; background: var(--yellow); color: var(--night); font: 700 1rem/1 var(--display); }
+.adm__me b { display: block; overflow: hidden; color: #fff; font-size: .9rem; text-overflow: ellipsis; white-space: nowrap; text-transform: capitalize; }
+.adm__me small { display: block; color: #aab1cf; font-size: .72rem; }
+.adm__me .live { display: inline-flex; align-items: center; gap: 6px; font-size: .7rem; color: #aab1cf; }
+.adm__salir { width: 100%; min-height: 36px; border: 1px solid rgb(255 255 255 / 18%); border-radius: 999px; background: transparent; color: #e7e9f3; cursor: pointer; font: 700 .64rem/1 var(--ui); letter-spacing: .14em; text-transform: uppercase; transition: background-color .2s, color .2s, border-color .2s; }
+.adm__salir:hover, .adm__salir:focus-visible { background: var(--yellow); border-color: var(--yellow); color: var(--night); }
 .adm__me .live i { width: 7px; height: 7px; border-radius: 50%; background: #6b7280; }
 .adm__me .live.on i { background: #2ec27e; box-shadow: 0 0 0 3px rgb(46 194 126 / 25%); }
 .adm__main { min-width: 0; padding: 26px clamp(16px, 3vw, 36px) 60px; }

@@ -143,9 +143,13 @@
       side.appendChild(nav[it[0]]);
     });
     live = el('span', { class: 'live' }, el('i'), 'Conectando…');
-    side.appendChild(el('div', { class: 'adm__me' }, el('b', { text: yo.nombre || yo.email }),
-      el('span', { class: 'muted', text: yo.rol === 'admin' ? 'Administración' : 'Asesor' }), el('br'), live,
-      el('button', { class: 'btn btn--line btn--sm', type: 'button', text: 'Cerrar sesión', onclick: salir })));
+    var nombreYo = yo.nombre || yo.email;
+    side.appendChild(el('div', { class: 'adm__me' },
+      el('div', { class: 'adm__who' },
+        el('span', { class: 'adm__avatar', 'aria-hidden': 'true', text: nombreYo.charAt(0).toUpperCase() }),
+        el('div', {}, el('b', { text: nombreYo }), el('small', { text: yo.rol === 'admin' ? 'Administración' : 'Asesor' }))),
+      live,
+      el('button', { class: 'adm__salir', type: 'button', text: 'Cerrar sesión', onclick: salir })));
     main = el('main', { class: 'adm__main', id: 'contenido' });
     var burger = el('button', { class: 'btn btn--line btn--sm adm__burger', type: 'button', text: 'Menú', onclick: function () { side.classList.toggle('is-open'); } });
     main.burger = burger;
