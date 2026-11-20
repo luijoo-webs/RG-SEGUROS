@@ -310,3 +310,12 @@ a { color: var(--navy); }
 .sup__nums span { font: 700 .52rem/1.2 var(--ui); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
 .chip--btn { border: 0; cursor: pointer; }
 .chip--btn:hover { background: var(--navy); color: #fff; }
+
+.polizas { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 18px 22px; margin-bottom: 18px; border-radius: 18px; background: var(--yellow); color: var(--ink); text-decoration: none; box-shadow: 0 14px 30px -20px rgba(15, 26, 69, .6); transition: transform .15s; }
+.polizas:hover { transform: translateY(-2px); }
+.polizas__txt b { display: block; font: 600 1.15rem/1.2 var(--display); }
+.polizas__txt span { font-size: .9rem; }
+.polizas__ir { display: grid; place-items: center; width: 44px; height: 44px; flex: none; border-radius: 50%; background: var(--night); color: #fff; font-size: 1.2rem; }
+.polizas--lado { margin: 26px 0 0; padding: 14px 16px; }
+.polizas--lado .polizas__txt b { font-size: 1rem; }
+.polizas--lado .polizas__txt span { font-size: .8rem; }

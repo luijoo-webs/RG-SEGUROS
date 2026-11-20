@@ -6,6 +6,12 @@
   var app = document.getElementById('app');
   var ESTADOS = { nueva: 'Recibida', en_gestion: 'En gestión', cotizada: 'Cotizada', ganada: 'Cerrada', perdida: 'Cerrada' };
   var WA = 'https://wa.me/573165268039?text=';
+  var POLIZAS = /^https:\/\//.test(C.portalPolizas || '') ? C.portalPolizas : null;
+  function botonPolizas(clase) {
+    return POLIZAS ? el('a', { class: clase, href: POLIZAS, target: '_blank', rel: 'noopener' },
+      el('span', { class: 'polizas__txt' }, el('b', { text: 'Mis pólizas vigentes' }), el('span', { text: 'Consulta tus pólizas, vencimientos y documentos en Soft Seguros' })),
+      el('span', { class: 'polizas__ir', 'aria-hidden': 'true', text: '↗' })) : null;
+  }
   var aqui = location.href.split('#')[0];
 
   function el(tag, attrs) {
@@ -100,7 +106,8 @@
         el('ul', { class: 'acceso__lista' },
           el('li', { text: 'Sigue el estado de cada solicitud' }),
           el('li', { text: 'Conversa directo con tu asesor' }),
-          el('li', { text: 'Reporta un siniestro en minutos' }))),
+          el('li', { text: 'Reporta un siniestro en minutos' })),
+        botonPolizas('polizas polizas--lado')),
       el('div', { class: 'acceso__form' },
         el('h1', { class: 'h1', text: pestana === 'crear' ? 'Crea tu cuenta' : 'Ingresa a tu cuenta' }),
         el('p', { class: 'muted', text: pestana === 'crear' ? 'Usa el mismo correo con el que pediste tu cotización.' : 'Bienvenido de nuevo.' }),
@@ -197,6 +204,7 @@
             el('div', {}, el('b', { text: String(enCurso) }), el('span', { text: 'En curso' })),
             el('div', {}, el('b', { text: String(resp) }), el('span', { text: 'Respuestas' })))),
         mensaje ? aviso('ok', mensaje) : null,
+        botonPolizas('polizas'),
         el('div', { class: 'cuenta-grid' },
           el('section', { class: 'caso__card', 'aria-labelledby': 'mis-sol' },
             el('div', { class: 'cuenta-sec' }, el('h2', { id: 'mis-sol', text: 'Mis solicitudes' }), el('a', { class: 'btn btn--sm', href: '../#contacto', text: 'Nueva solicitud' })),
