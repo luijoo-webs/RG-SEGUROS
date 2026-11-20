@@ -1,8 +1,10 @@
 // =============================================================================
-// RG AI — Edge Function (Supabase). Asistente del sitio con Claude (Anthropic).
+// RG AI — Edge Function (Supabase). Asistente del sitio con Gemini (gratis) o Claude.
 //
 // Secretos (Supabase → Edge Functions → Secrets):
-//   ANTHROPIC_API_KEY   clave de API de Anthropic (obligatoria)
+//   GEMINI_API_KEY      clave gratuita de Google AI Studio (si existe, se usa Gemini)
+//   GEMINI_MODELO       opcional (por defecto gemini-flash-latest)
+//   ANTHROPIC_API_KEY   clave de API de Anthropic (se usa si no hay GEMINI_API_KEY)
 //   ALLOWED_ORIGINS     orígenes permitidos, separados por comas
 //                       p. ej. https://usuario.github.io,https://www.rgasesoriasyseguros.com.co
 //   RG_AI_MODELO        opcional (por defecto claude-opus-5-5)
@@ -65,9 +67,10 @@ export async function manejar(req: Request): Promise<Response> {
   if (req.method !== "POST") return responder(405, { ok: false, message: "Método no permitido." });
   if (origenes().length && (!origen || !origenes().includes(origen))) return responder(403, { ok: false, message: "Solicitud no permitida." });
 
+  const geminiKey = Deno.env.get("GEMINI_API_KEY");
   const apiKey = Deno.env.get("ANTHROPIC_API_KEY");
-  if (!apiKey) {
-    console.error("[rg-ai] Falta el secreto ANTHROPIC_API_KEY");
+  if (!apiKey && !geminiKey) {
+    console.error("[rg-ai] Falta el secreto GEMINI_API_KEY (o ANTHROPIC_API_KEY)");
     return responder(503, { ok: false, message: NO_DISPONIBLE });
   }
 
@@ -90,6 +93,8 @@ export async function manejar(req: Request): Promise<Response> {
   }
   if (cupo === "ip") return responder(429, { ok: false, message: `Has enviado muchas preguntas seguidas. Espera unos minutos o escríbenos por WhatsApp: ${WHATSAPP}` });
   if (cupo !== "ok") return responder(429, { ok: false, message: `RG AI alcanzó su límite de consultas por hoy. Escríbenos por WhatsApp (${WHATSAPP}) o llámanos al 316 526 8039.` });
+
+  if (geminiKey) return responder(...await conGemini(geminiKey, mensajes));
 
   try {
     const client = new Anthropic({ apiKey });
@@ -122,6 +127,41 @@ export async function manejar(req: Request): Promise<Response> {
     else if (e instanceof Anthropic.APIError) console.error(`[rg-ai] API ${e.status}: ${e.message}`);
     else console.error("[rg-ai] Error:", (e as Error).message);
     return responder(502, { ok: false, message: NO_DISPONIBLE });
+  }
+}
+
+/** Google Gemini (plan gratuito de AI Studio). Se usa cuando existe GEMINI_API_KEY. */
+async function conGemini(clave: string, mensajes: Mensaje[]): Promise<[number, Record<string, unknown>]> {
+  const modelo = Deno.env.get("GEMINI_MODELO") || "gemini-flash-latest";
+  try {
+    const res = await fetch(`${Deno.env.get("GEMINI_BASE_URL") || "https://generativelanguage.googleapis.com"}/v1beta/models/${encodeURIComponent(modelo)}:generateContent`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "x-goog-api-key": clave },
+      body: JSON.stringify({
+        systemInstruction: { parts: [{ text: INSTRUCCIONES }] },
+        contents: mensajes.map((m) => ({ role: m.role === "assistant" ? "model" : "user", parts: [{ text: m.content }] })),
+        generationConfig: { maxOutputTokens: 2048, temperature: 0.4 },
+      }),
+    });
+    // deno-lint-ignore no-explicit-any
+    const r: any = await res.json().catch(() => ({}));
+    if (!res.ok) {
+      console.error(`[rg-ai] Gemini ${res.status}: ${r?.error?.message ?? ""}`);
+      if (res.status === 429) return [429, { ok: false, message: `RG AI alcanzó su límite de consultas por ahora. Escríbenos por WhatsApp (${WHATSAPP}) o llámanos al 316 526 8039.` }];
+      return [502, { ok: false, message: NO_DISPONIBLE }];
+    }
+    const c = r.candidates?.[0];
+    if (r.promptFeedback?.blockReason || c?.finishReason === "SAFETY") {
+      return [200, { ok: true, reply: `No puedo ayudarte con esa consulta. Si es sobre un seguro o una póliza, un asesor puede orientarte por WhatsApp: ${WHATSAPP}` }];
+    }
+    let texto = (c?.content?.parts ?? []).filter((p: { text?: string; thought?: boolean }) => p.text && !p.thought).map((p: { text: string }) => p.text).join("").trim();
+    if (!texto) throw new Error(`Respuesta sin texto (finishReason=${c?.finishReason})`);
+    if (c?.finishReason === "MAX_TOKENS") texto += `\n\n(Respuesta resumida. Para más detalle, escríbenos por WhatsApp: ${WHATSAPP})`;
+    console.log(`[rg-ai] ok gemini modelo=${modelo} in=${r.usageMetadata?.promptTokenCount} out=${r.usageMetadata?.candidatesTokenCount}`);
+    return [200, { ok: true, reply: texto }];
+  } catch (e) {
+    console.error("[rg-ai] Error Gemini:", (e as Error).message);
+    return [502, { ok: false, message: NO_DISPONIBLE }];
   }
 }
 
