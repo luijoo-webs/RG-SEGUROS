@@ -840,7 +840,11 @@ dialog::backdrop { background: rgb(10 18 51 / 55%); backdrop-filter: blur(3px); 
 .dlg__cuerpo .reveal { opacity: 1; transform: none; }
 @media (max-width: 820px) { .sobre { grid-template-columns: 1fr; } }
 [data-products]:not(.ver-todo) > :nth-child(n+7) { display: none; }
-.ver-todos { display: flex; justify-content: center; margin-top: 26px; }
+.ver-todos { display: flex; justify-content: center; margin-top: 22px; }
+.ver-todos button { background: none; border: 0; padding: 8px 4px; cursor: pointer; font: 600 .95rem/1 inherit; color: var(--navy); border-bottom: 1px solid currentColor; }
+.ver-todos button:hover { opacity: .7; }
+.ver-todos button span { display: inline-block; transition: transform .25s; }
+.ver-todos button[aria-expanded="true"] span { transform: rotate(180deg); }
 .dlg__cuerpo section, .dlg__cuerpo h2 { scroll-margin-top: 84px; }
 
 </style>
@@ -1268,7 +1272,7 @@ dialog::backdrop { background: rgb(10 18 51 / 55%); backdrop-filter: blur(3px); 
   <button class="product__add" type="button" data-add="arl"><svg class="icon product__add-ico" aria-hidden="true"><use href="#i-shield"/></svg><span class="product__add-on">Agregar a mi solicitud</span><span class="product__add-off">✓ En tu solicitud</span><span class="product__add-go" aria-hidden="true"><svg class="icon"><use href="#i-arrow"/></svg></span></button>
 </article>
       </div>
-      <div class="ver-todos"><button class="btn btn--line" type="button" data-ver-todos>Ver los 12 seguros</button></div>
+      <div class="ver-todos"><button type="button" data-ver-todos aria-expanded="false">Ver más seguros <span aria-hidden="true">↓</span></button></div>
     </section>
     </div>
 
@@ -1511,9 +1515,9 @@ dialog::backdrop { background: rgb(10 18 51 / 55%); backdrop-filter: blur(3px); 
   });
   if (location.hash) abrir(location.hash.slice(1));
   var prod = document.querySelector('[data-products]'), ver = document.querySelector('[data-ver-todos]');
-  function todo() { prod.classList.add('ver-todo'); ver.parentNode.hidden = true; }
-  ver.addEventListener('click', todo);
-  document.querySelectorAll('[data-filter]').forEach(function (b) { b.addEventListener('click', todo); });
+  function todo(abierto) { if (abierto === undefined) abierto = true; prod.classList.toggle('ver-todo', abierto); ver.setAttribute('aria-expanded', abierto); ver.firstChild.textContent = abierto ? 'Ver menos ' : 'Ver más seguros '; }
+  ver.addEventListener('click', function () { var abrir = !prod.classList.contains('ver-todo'); todo(abrir); if (!abrir) document.getElementById('seguros').scrollIntoView({ block: 'start' }); });
+  document.querySelectorAll('[data-filter]').forEach(function (b) { b.addEventListener('click', function () { todo(true); }); });
   // un enlace a una tarjeta escondida (búsqueda, menú) primero muestra el catálogo completo
   document.addEventListener('click', function (e) { var a = e.target.closest && e.target.closest('a[href^="#"]'); var t = a && a.getAttribute('href').length > 1 && document.getElementById(a.getAttribute('href').slice(1)); if (t && (prod.contains(t) || /^(personas|empresas)$/.test(t.id))) todo(); }, true);
   if (/^#(personas|empresas)$/.test(location.hash) || (location.hash.length > 1 && prod.querySelector(location.hash))) todo();
