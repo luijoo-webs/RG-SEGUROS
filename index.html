@@ -835,26 +835,8 @@ dialog::backdrop { background: rgb(10 18 51 / 55%); backdrop-filter: blur(3px); 
 .cabeza p { max-width: 640px; }
 main > .section { padding-block: clamp(48px, 5.5vw, 76px); }
 main > .tras-cabeza { padding-top: 28px; }
-.sobre { position: relative; overflow: hidden; isolation: isolate; padding: clamp(32px, 5vw, 64px); border-radius: 28px; color: #fff;
   background: radial-gradient(110% 140% at 100% 0%, #2b47a6 0%, var(--navy) 45%, var(--night-2, #0a1233) 100%); }
-/* anillos que giran despacio detrás del texto: dan vida sin distraer */
-.sobre::before, .sobre::after { content: ""; position: absolute; z-index: -1; border-radius: 50%; pointer-events: none; }
-.sobre::before { width: 520px; height: 520px; right: -160px; top: -220px; background: conic-gradient(from 0deg, transparent 0 70%, rgb(255 214 0 / 35%) 85%, transparent 100%);
-  -webkit-mask: radial-gradient(closest-side, transparent 96%, #000 97%); mask: radial-gradient(closest-side, transparent 96%, #000 97%); animation: sobre-giro 14s linear infinite; }
-.sobre::after { width: 340px; height: 340px; right: -70px; top: -130px; border: 1px solid rgb(255 255 255 / 10%); }
-@keyframes sobre-giro { to { transform: rotate(360deg); } }
-.sobre .h-section { color: #fff; max-width: 720px; }
-.sobre p { color: rgb(255 255 255 / 82%); max-width: 600px; }
-.sobre .eyebrow { color: var(--yellow); }
 .sobre__btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
-.sobre__datos { list-style: none; margin: clamp(32px, 4vw, 48px) 0 0; padding: clamp(24px, 3vw, 32px) 0 0; display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid rgb(255 255 255 / 14%); }
-.sobre__datos li { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; padding: 4px 12px; }
-.sobre__datos li + li { border-left: 1px solid rgb(255 255 255 / 14%); }
-.sobre__datos b { display: flex; align-items: flex-start; justify-content: center; font: 600 clamp(2.6rem, 5vw, 4.2rem)/1 var(--display); color: var(--yellow); font-variant-numeric: tabular-nums; }
-.sobre__datos b i { font-style: normal; font-size: .55em; margin-top: .12em; }
-.sobre__datos small { font: 700 .7rem/1.3 var(--ui, inherit); letter-spacing: .14em; text-transform: uppercase; color: rgb(255 255 255 / 78%); }
-@media (max-width: 560px) { .sobre__datos li { padding: 4px 6px; } .sobre__datos small { font-size: .6rem; letter-spacing: .08em; } }
-@media (prefers-reduced-motion: reduce) { .sobre::before { animation: none; } }
 /* proceso bajo los canales de contacto */
 .pasos-rg { list-style: none; counter-reset: paso; margin: 22px 0 0; padding: 24px; border-radius: 18px; background: linear-gradient(160deg, #f4f6fc, #fff); border: 1px solid rgb(17 22 51 / 8%); display: grid; gap: 18px; position: relative; }
 .pasos-rg li { counter-increment: paso; display: grid; grid-template-columns: 40px 1fr; column-gap: 14px; position: relative; }
@@ -878,13 +860,6 @@ main > .tras-cabeza { padding-top: 28px; }
 /* "Ver más seguros": las tarjetas extra aparecen al instante, sin esperar la animación de entrada */
 [data-products].ver-todo > :nth-child(n+7) { opacity: 1; transform: none; filter: none; transition-delay: 0s; animation: aparecer .35s ease both; }
 @keyframes aparecer { from { opacity: 0; transform: translateY(10px); } }
-/* Sobre RG con foto del equipo */
-.sobre { display: grid; grid-template-columns: 1.15fr 1fr; column-gap: clamp(24px, 4vw, 56px); align-items: center; }
-.sobre__datos { grid-column: 1 / -1; }
-.sobre__foto { margin: 0; border-radius: 20px; overflow: hidden; box-shadow: 0 30px 60px -30px rgb(0 0 0 / 60%); transform: rotate(1.5deg); transition: transform .6s var(--ease); }
-.sobre__foto:hover { transform: rotate(0) scale(1.02); }
-.sobre__foto img { display: block; width: 100%; height: auto; }
-@media (max-width: 860px) { .sobre { grid-template-columns: 1fr; } .sobre__foto { margin-top: 28px; transform: none; } }
 /* Banda: notificaciones en un celular */
 .avisos { display: grid; grid-template-columns: 1fr auto; gap: clamp(28px, 5vw, 72px); align-items: center; padding: clamp(28px, 4vw, 48px) clamp(24px, 5vw, 64px); border-radius: 28px; background: linear-gradient(135deg, #fff8d6 0%, #f3f6ff 60%); border: 1px solid rgb(17 22 51 / 7%); overflow: hidden; }
 .avisos__texto p { max-width: 520px; }
@@ -900,15 +875,27 @@ main > .tras-cabeza { padding-top: 28px; }
 .noti small { display: block; font-size: .62rem; color: #6b7086; }
 .noti b { display: block; font-size: .8rem; line-height: 1.25; }
 .noti span { display: block; font-size: .72rem; line-height: 1.3; color: #3b4057; }
-.noti--1 { animation: noti1 10s infinite; } .noti--2 { animation: noti2 10s infinite; } .noti--3 { animation: noti3 10s infinite; }
+.noti--1 { animation: noti1 8s infinite; } .noti--2 { animation: noti2 8s infinite; }
 @keyframes noti1 { 0% { opacity: 0; transform: translateY(-16px) scale(.95); } 4%, 90% { opacity: 1; transform: none; } 97%, 100% { opacity: 0; transform: scale(.97); } }
 @keyframes noti2 { 0%, 28% { opacity: 0; transform: translateY(-16px) scale(.95); } 32%, 90% { opacity: 1; transform: none; } 97%, 100% { opacity: 0; transform: scale(.97); } }
-@keyframes noti3 { 0%, 56% { opacity: 0; transform: translateY(-16px) scale(.95); } 60%, 90% { opacity: 1; transform: none; } 97%, 100% { opacity: 0; transform: scale(.97); } }
 @media (prefers-reduced-motion: reduce) { .noti { animation: none; opacity: 1; } }
 @media (max-width: 760px) { .avisos { grid-template-columns: 1fr; } .movil { margin-inline: auto; width: min(290px, 100%); } }
 /* la banda queda pegada a los logos y al catálogo, sin huecos */
 main > [aria-labelledby="avisos-titulo"] { padding-top: 8px; padding-bottom: 0; }
 main > #seguros.cabeza { padding-top: clamp(40px, 4.5vw, 56px); }
+
+/* Sobre RG: editorial y claro (texto, cifras con líneas finas, foto recta) */
+.sobre { display: grid; grid-template-columns: 1fr 1.05fr; gap: clamp(32px, 6vw, 88px); align-items: center; }
+.sobre__texto p { max-width: 540px; color: var(--muted, #4c5167); }
+.sobre__datos { list-style: none; margin: clamp(28px, 3.5vw, 40px) 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(16px, 2.5vw, 32px); }
+.sobre__datos li { padding-top: 16px; border-top: 1px solid var(--line-2, rgb(17 22 51 / 18%)); }
+.sobre__datos b { display: block; font: 600 clamp(2.2rem, 3.6vw, 3rem)/1 var(--display); color: var(--navy); font-variant-numeric: tabular-nums; }
+.sobre__datos small { display: block; margin-top: 8px; font: 700 .66rem/1.35 var(--ui); letter-spacing: .14em; text-transform: uppercase; color: var(--muted, #5b6075); }
+.sobre__acciones { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 28px; }
+.sobre__foto { margin: 0; }
+.sobre__foto img { display: block; width: 100%; height: auto; border-radius: 22px; }
+.sobre__foto figcaption { margin-top: 12px; font: 700 .66rem/1 var(--ui); letter-spacing: .16em; text-transform: uppercase; color: var(--muted, #5b6075); }
+@media (max-width: 860px) { .sobre { grid-template-columns: 1fr; } .sobre__foto { order: -1; } }
 
 </style>
 </head>
@@ -1145,7 +1132,7 @@ main > #seguros.cabeza { padding-top: clamp(40px, 4.5vw, 56px); }
     <section class="section--tight wrap" aria-labelledby="avisos-titulo">
       <div class="avisos">
         <div class="avisos__texto"><span class="eyebrow">Mi cuenta</span><h2 class="h-section" id="avisos-titulo">Tu solicitud, paso a paso</h2><p>Cada vez que tu solicitud avanza te avisamos, y en Mi cuenta ves en qué va: recibida, en gestión o cotizada. Sin tener que llamar a preguntar.</p><div class="sobre__btns"><a class="btn btn--yellow" href="#formulario">Solicitar cotización</a><a class="btn btn--line" href="cuenta/">Entrar a Mi cuenta</a></div></div>
-        <div class="movil" aria-hidden="true"><div class="movil__pantalla"><span class="movil__isla"></span><b class="movil__hora">9:41</b><span class="movil__fecha">lunes, 24 de noviembre</span><div class="noti noti--1"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-img="i0" alt=""><div><small>RG Asesorías y Seguros · ahora</small><b>Recibimos tu solicitud</b><span>Un asesor ya la está revisando.</span></div></div><div class="noti noti--2"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-img="i0" alt=""><div><small>RG Asesorías y Seguros · ahora</small><b>Tu solicitud está en gestión</b><span>Comparamos opciones entre aseguradoras.</span></div></div><div class="noti noti--3"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-img="i0" alt=""><div><small>RG Asesorías y Seguros · ahora</small><b>¡Tu cotización está lista!</b><span>Entra a Mi cuenta para verla.</span></div></div></div></div>
+        <div class="movil" aria-hidden="true"><div class="movil__pantalla"><span class="movil__isla"></span><b class="movil__hora">9:41</b><span class="movil__fecha">lunes, 24 de noviembre</span><div class="noti noti--1"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-img="i0" alt=""><div><small>RG Asesorías y Seguros · ahora</small><b>Recibimos tu solicitud</b><span>Un asesor ya la está revisando.</span></div></div><div class="noti noti--2"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-img="i0" alt=""><div><small>RG Asesorías y Seguros · ahora</small><b>¡Tu cotización está lista!</b><span>Entra a Mi cuenta para verla.</span></div></div></div></div>
       </div>
     </section>
 
@@ -1344,9 +1331,8 @@ main > #seguros.cabeza { padding-top: clamp(40px, 4.5vw, 56px); }
 
     <section class="section wrap" aria-labelledby="sobre-titulo">
       <div class="sobre">
-        <div><span class="eyebrow">Sobre RG</span><h2 class="h-section" id="sobre-titulo">Más de 15 años protegiendo lo que más valoras</h2><p>Somos profesionales especializados en asesoría en seguros y protección patrimonial en Valledupar, Cesar. Te ayudamos a tomar decisiones informadas para cuidar tu patrimonio, tu bienestar y tu futuro.</p><div class="sobre__btns"><a class="btn btn--yellow" href="#nosotros">Conócenos</a><a class="btn btn--ghost" href="#nosotros" data-ir="misión">Misión y visión</a><a class="btn btn--ghost" href="#nosotros" data-ir="equipo-titulo">Nuestro equipo</a></div></div>
-        <figure class="sobre__foto"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-img="i18" width="1280" height="786" alt="Equipo de RG Asesorías y Seguros" loading="lazy"></figure>
-        <ul class="sobre__datos"><li><b><i>+</i><span data-contar="15">15</span></b><small>Años de experiencia</small></li><li><b><span data-contar="12">12</span></b><small>Tipos de seguros</small></li><li><b><span data-contar="7">7</span></b><small>Personas a tu servicio</small></li></ul>
+        <div class="sobre__texto"><span class="eyebrow">Sobre RG</span><h2 class="h-section" id="sobre-titulo">Más de 15 años protegiendo lo que más valoras</h2><p>Somos profesionales especializados en asesoría en seguros y protección patrimonial en Valledupar, Cesar. Te ayudamos a tomar decisiones informadas para cuidar tu patrimonio, tu bienestar y tu futuro.</p><ul class="sobre__datos"><li><b>+<span data-contar="15">15</span></b><small>Años de experiencia</small></li><li><b><span data-contar="12">12</span></b><small>Tipos de seguros</small></li><li><b><span data-contar="7">7</span></b><small>Personas a tu servicio</small></li></ul><div class="sobre__acciones"><a class="btn" href="#nosotros">Conócenos</a><a class="link" href="#nosotros" data-ir="misión">Misión y visión <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a><a class="link" href="#nosotros" data-ir="equipo-titulo">Nuestro equipo <svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a></div></div>
+        <figure class="sobre__foto"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-img="i18" width="1280" height="786" alt="Equipo de RG Asesorías y Seguros" loading="lazy"><figcaption>Nuestro equipo · Valledupar, Cesar</figcaption></figure>
       </div>
     </section>
 
