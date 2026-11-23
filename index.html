@@ -906,6 +906,9 @@ main > .tras-cabeza { padding-top: 28px; }
 @keyframes noti3 { 0%, 56% { opacity: 0; transform: translateY(-16px) scale(.95); } 60%, 90% { opacity: 1; transform: none; } 97%, 100% { opacity: 0; transform: scale(.97); } }
 @media (prefers-reduced-motion: reduce) { .noti { animation: none; opacity: 1; } }
 @media (max-width: 760px) { .avisos { grid-template-columns: 1fr; } .movil { margin-inline: auto; width: min(290px, 100%); } }
+/* la banda queda pegada a los logos y al catálogo, sin huecos */
+main > [aria-labelledby="avisos-titulo"] { padding-top: 8px; padding-bottom: 0; }
+main > #seguros.cabeza { padding-top: clamp(40px, 4.5vw, 56px); }
 
 </style>
 </head>
