@@ -135,6 +135,15 @@ button { font: inherit; color: inherit; }
 .bag__count { position: absolute; top: 4px; right: 2px; min-width: 18px; height: 18px; padding: 0 5px; border-radius: 9px; background: var(--yellow); color: var(--ink); font: 800 .65rem/18px var(--ui); text-align: center; }
 .bag__count[hidden] { display: none; }
 @media (max-width: 1279px) { .nav-inline { display: none; } }
+/* Escritorio: menú ≡ y buscar · logo a la izquierda · enlaces centrados · acciones a la derecha */
+@media (min-width: 1280px) {
+  .site-header__inner { display: flex; gap: 6px; position: relative; }
+  .site-header__left { display: contents; }
+  .site-header__inner .logo { order: 1; margin-left: 14px; }
+  /* centrado exacto respecto a la cabecera, sin importar el ancho de los lados */
+  .nav-inline { position: absolute; left: 50%; transform: translateX(-50%); gap: 40px; margin: 0; }
+  .site-header__right { order: 3; margin-left: auto; }
+}
 @media (max-width: 640px) {
   .hide-sm { display: none; }
   .logo__text small { display: none; }
@@ -922,7 +931,7 @@ main > .tras-cabeza { padding-top: 28px; }
       <div class="site-header__left">
         <button class="icon-btn" type="button" data-open="menu" aria-label="Abrir menú"><svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg></button>
         <button class="icon-btn" type="button" data-open="buscar" aria-label="Buscar seguros"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg></button>
-        <nav class="nav-inline" aria-label="Menú principal"><a href="#seguros">Seguros</a><a href="#contacto">Contacto</a></nav>
+        <nav class="nav-inline" aria-label="Menú principal"><a href="#personas">Personas</a><a href="#empresas">Empresas</a><a href="#nosotros">Nosotros</a><a href="#contacto">Contacto</a></nav>
       </div>
       <a class="logo" href="#inicio" aria-label="RG Asesorías y Seguros, ir al inicio">
         <img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-img="i0" width="44" height="44" alt="">
