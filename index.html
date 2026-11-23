@@ -821,24 +821,44 @@ dialog::backdrop { background: rgb(10 18 51 / 55%); backdrop-filter: blur(3px); 
 .persona__mas summary::after { content: " +"; }
 .persona__mas[open] summary::after { content: " –"; }
 /* Página única breve */
-.cabeza { padding-top: clamp(56px, 7vw, 96px); padding-bottom: 8px; }
+.cabeza { padding-top: clamp(44px, 5vw, 72px); padding-bottom: 8px; }
 .cabeza .eyebrow { display: block; margin-bottom: 10px; }
 .cabeza p { max-width: 640px; }
-.sobre { display: grid; grid-template-columns: 1.5fr 1fr; gap: clamp(24px, 4vw, 56px); align-items: center; padding: clamp(28px, 4.5vw, 56px); border-radius: 28px; color: #fff;
+main > .section { padding-block: clamp(48px, 5.5vw, 76px); }
+main > .tras-cabeza { padding-top: 28px; }
+.sobre { position: relative; overflow: hidden; isolation: isolate; padding: clamp(32px, 5vw, 64px); border-radius: 28px; color: #fff;
   background: radial-gradient(110% 140% at 100% 0%, #2b47a6 0%, var(--navy) 45%, var(--night-2, #0a1233) 100%); }
-.sobre .h-section { color: #fff; }
-.sobre p { color: rgb(255 255 255 / 82%); max-width: 560px; }
+/* anillos que giran despacio detrás del texto: dan vida sin distraer */
+.sobre::before, .sobre::after { content: ""; position: absolute; z-index: -1; border-radius: 50%; pointer-events: none; }
+.sobre::before { width: 520px; height: 520px; right: -160px; top: -220px; background: conic-gradient(from 0deg, transparent 0 70%, rgb(255 214 0 / 35%) 85%, transparent 100%);
+  -webkit-mask: radial-gradient(closest-side, transparent 96%, #000 97%); mask: radial-gradient(closest-side, transparent 96%, #000 97%); animation: sobre-giro 14s linear infinite; }
+.sobre::after { width: 340px; height: 340px; right: -70px; top: -130px; border: 1px solid rgb(255 255 255 / 10%); }
+@keyframes sobre-giro { to { transform: rotate(360deg); } }
+.sobre .h-section { color: #fff; max-width: 720px; }
+.sobre p { color: rgb(255 255 255 / 82%); max-width: 600px; }
 .sobre .eyebrow { color: var(--yellow); }
-.sobre__btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
-.sobre__datos { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
-.sobre__datos li { display: flex; align-items: baseline; gap: 14px; padding: 16px 20px; border-radius: 16px; background: rgb(255 255 255 / 8%); }
-.sobre__datos b { font: 600 clamp(1.8rem, 3vw, 2.4rem)/1 var(--display); color: var(--yellow); min-width: 64px; }
-.sobre__datos span { color: rgb(255 255 255 / 85%); }
+.sobre__btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+.sobre__datos { list-style: none; margin: clamp(32px, 4vw, 48px) 0 0; padding: clamp(24px, 3vw, 32px) 0 0; display: grid; grid-template-columns: repeat(3, 1fr); border-top: 1px solid rgb(255 255 255 / 14%); }
+.sobre__datos li { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; padding: 4px 12px; }
+.sobre__datos li + li { border-left: 1px solid rgb(255 255 255 / 14%); }
+.sobre__datos b { display: flex; align-items: flex-start; justify-content: center; font: 600 clamp(2.6rem, 5vw, 4.2rem)/1 var(--display); color: var(--yellow); font-variant-numeric: tabular-nums; }
+.sobre__datos b i { font-style: normal; font-size: .55em; margin-top: .12em; }
+.sobre__datos small { font: 700 .7rem/1.3 var(--ui, inherit); letter-spacing: .14em; text-transform: uppercase; color: rgb(255 255 255 / 78%); }
+@media (max-width: 560px) { .sobre__datos li { padding: 4px 6px; } .sobre__datos small { font-size: .6rem; letter-spacing: .08em; } }
+@media (prefers-reduced-motion: reduce) { .sobre::before { animation: none; } }
+/* proceso bajo los canales de contacto */
+.pasos-rg { list-style: none; counter-reset: paso; margin: 22px 0 0; padding: 24px; border-radius: 18px; background: linear-gradient(160deg, #f4f6fc, #fff); border: 1px solid rgb(17 22 51 / 8%); display: grid; gap: 18px; position: relative; }
+.pasos-rg li { counter-increment: paso; display: grid; grid-template-columns: 40px 1fr; column-gap: 14px; position: relative; }
+.pasos-rg li::before { content: counter(paso); grid-row: span 2; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--navy); color: var(--yellow); font: 600 1rem/1 var(--display); position: relative; z-index: 1; }
+.pasos-rg li:not(:last-child)::after { content: ""; position: absolute; left: 19px; top: 42px; bottom: -18px; width: 2px; background: var(--yellow); transform-origin: top; transform: scaleY(0); transition: transform .7s ease; }
+.pasos-rg.is-visible li::after, .pasos-rg.in li::after { transform: scaleY(1); }
+.pasos-rg li:nth-child(2)::after { transition-delay: .5s; }
+.pasos-rg b { color: var(--ink); font-weight: 600; }
+.pasos-rg span { font-size: .9rem; color: var(--muted, #5b6075); }
 .dlg--ancho { width: min(1100px, calc(100vw - 24px)); }
 .dlg__cuerpo > section { padding-left: clamp(16px, 3vw, 32px); padding-right: clamp(16px, 3vw, 32px); }
 .dlg__cuerpo .section, .dlg__cuerpo .section--tight { padding-top: 28px; padding-bottom: 28px; }
 .dlg__cuerpo .reveal { opacity: 1; transform: none; }
-@media (max-width: 820px) { .sobre { grid-template-columns: 1fr; } }
 [data-products]:not(.ver-todo) > :nth-child(n+7) { display: none; }
 .ver-todos { display: flex; justify-content: center; margin-top: 22px; }
 .ver-todos button { background: none; border: 0; padding: 8px 4px; cursor: pointer; font: 600 .95rem/1 inherit; color: var(--navy); border-bottom: 1px solid currentColor; }
@@ -902,13 +922,7 @@ dialog::backdrop { background: rgb(10 18 51 / 55%); backdrop-filter: blur(3px); 
       <div class="site-header__left">
         <button class="icon-btn" type="button" data-open="menu" aria-label="Abrir menú"><svg class="icon" aria-hidden="true"><use href="#i-menu"/></svg></button>
         <button class="icon-btn" type="button" data-open="buscar" aria-label="Buscar seguros"><svg class="icon" aria-hidden="true"><use href="#i-search"/></svg></button>
-        <nav class="nav-inline" aria-label="Menú principal">
-          <a href="#inicio">Inicio</a>
-          <a href="#personas">Personas</a>
-          <a href="#empresas">Empresas</a>
-          <a href="#nosotros">Nosotros</a>
-          <a href="#contacto">Contacto</a>
-        </nav>
+        <nav class="nav-inline" aria-label="Menú principal"><a href="#seguros">Seguros</a><a href="#contacto">Contacto</a></nav>
       </div>
       <a class="logo" href="#inicio" aria-label="RG Asesorías y Seguros, ir al inicio">
         <img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-img="i0" width="44" height="44" alt="">
@@ -1058,7 +1072,7 @@ dialog::backdrop { background: rgb(10 18 51 / 55%); backdrop-filter: blur(3px); 
 
 
 
-    <section class="section wrap" aria-labelledby="marcas-titulo">
+    <section class="section--tight wrap" aria-labelledby="marcas-titulo">
       <div class="row-head">
         <div>
           <h2 class="h-section" id="marcas-titulo">Aseguradoras con las que trabajamos</h2>
@@ -1281,14 +1295,14 @@ dialog::backdrop { background: rgb(10 18 51 / 55%); backdrop-filter: blur(3px); 
     <section class="section wrap" aria-labelledby="sobre-titulo">
       <div class="sobre">
         <div><span class="eyebrow">Sobre RG</span><h2 class="h-section" id="sobre-titulo">Más de 15 años protegiendo lo que más valoras</h2><p>Somos profesionales especializados en asesoría en seguros y protección patrimonial en Valledupar, Cesar. Te ayudamos a tomar decisiones informadas para cuidar tu patrimonio, tu bienestar y tu futuro.</p><div class="sobre__btns"><a class="btn btn--yellow" href="#nosotros">Conócenos</a><a class="btn btn--ghost" href="#nosotros" data-ir="misión">Misión y visión</a><a class="btn btn--ghost" href="#nosotros" data-ir="equipo-titulo">Nuestro equipo</a></div></div>
-        <ul class="sobre__datos"><li><b>+15</b><span>años de experiencia</span></li><li><b>12</b><span>tipos de seguros</span></li><li><b>7</b><span>personas a tu servicio</span></li></ul>
+        <ul class="sobre__datos"><li><b><i>+</i><span data-contar="15">15</span></b><small>Años de experiencia</small></li><li><b><span data-contar="12">12</span></b><small>Tipos de seguros</small></li><li><b><span data-contar="7">7</span></b><small>Personas a tu servicio</small></li></ul>
       </div>
     </section>
 
 
     <section id="contacto" class="section--tight wrap cabeza" aria-labelledby="titulo-contacto"><span class="eyebrow">Contacto</span><h2 class="h-section" id="titulo-contacto">Hablemos</h2><p>Escríbenos, llámanos o déjanos tus datos y un asesor se pondrá en contacto contigo. <a href="#preguntas">Ver preguntas frecuentes</a></p></section>
 
-    <section class="section wrap" aria-label="Canales de contacto y formulario">
+    <section class="section wrap tras-cabeza" aria-label="Canales de contacto y formulario">
       <div class="contact">
         <div>
           <h2 class="h-section" style="margin-bottom:18px">Canales de atención</h2>
@@ -1300,6 +1314,7 @@ dialog::backdrop { background: rgb(10 18 51 / 55%); backdrop-filter: blur(3px); 
             <li><div><span class="quick__icon"><svg class="icon" aria-hidden="true"><use href="#i-clock"/></svg></span><span><small>Horario</small><span class="val">Lunes a viernes, 8:00 a.m. – 5:30 p.m.</span></span></div></li>
           </ul>
           <button class="btn btn--line btn--block" type="button" data-rgai-open style="margin-top:14px"><svg class="icon" aria-hidden="true"><use href="#i-spark"/></svg>¿Duda rápida? Pregúntale a RG AI</button>
+          <ol class="pasos-rg reveal" aria-label="Cómo te acompañamos"><li><b>Cuéntanos qué necesitas</b><span>Por WhatsApp, teléfono o el formulario.</span></li><li><b>Comparamos opciones</b><span>Entre las aseguradoras con las que trabajamos.</span></li><li><b>Te acompañamos siempre</b><span>En la emisión, las renovaciones y los siniestros.</span></li></ol>
         </div>
 
         <div class="form-box" id="formulario">
@@ -1521,6 +1536,15 @@ dialog::backdrop { background: rgb(10 18 51 / 55%); backdrop-filter: blur(3px); 
   // un enlace a una tarjeta escondida (búsqueda, menú) primero muestra el catálogo completo
   document.addEventListener('click', function (e) { var a = e.target.closest && e.target.closest('a[href^="#"]'); var t = a && a.getAttribute('href').length > 1 && document.getElementById(a.getAttribute('href').slice(1)); if (t && (prod.contains(t) || /^(personas|empresas)$/.test(t.id))) todo(); }, true);
   if (/^#(personas|empresas)$/.test(location.hash) || (location.hash.length > 1 && prod.querySelector(location.hash))) todo();
+  // cifras de Sobre RG: cuentan desde 0 cuando aparecen (sin animación si el usuario la reduce)
+  var cifras = document.querySelectorAll('[data-contar]');
+  if ('IntersectionObserver' in window && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    var obs = new IntersectionObserver(function (es) { es.forEach(function (e) { if (!e.isIntersecting) return; obs.unobserve(e.target);
+      var el = e.target, fin = +el.dataset.contar, t0 = performance.now(); el.textContent = '0';
+      (function paso(t) { var k = Math.min(1, (t - t0) / 1400); el.textContent = Math.round(fin * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(paso); })(t0);
+    }); }, { threshold: .6 });
+    cifras.forEach(function (c) { obs.observe(c); });
+  }
 })();
 </script>
 
