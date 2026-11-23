@@ -820,6 +820,28 @@ dialog::backdrop { background: rgb(10 18 51 / 55%); backdrop-filter: blur(3px); 
 .persona__mas summary::-webkit-details-marker { display: none; }
 .persona__mas summary::after { content: " +"; }
 .persona__mas[open] summary::after { content: " –"; }
+/* Página única breve */
+.cabeza { padding-top: clamp(56px, 7vw, 96px); padding-bottom: 8px; }
+.cabeza .eyebrow { display: block; margin-bottom: 10px; }
+.cabeza p { max-width: 640px; }
+.sobre { display: grid; grid-template-columns: 1.5fr 1fr; gap: clamp(24px, 4vw, 56px); align-items: center; padding: clamp(28px, 4.5vw, 56px); border-radius: 28px; color: #fff;
+  background: radial-gradient(110% 140% at 100% 0%, #2b47a6 0%, var(--navy) 45%, var(--night-2, #0a1233) 100%); }
+.sobre .h-section { color: #fff; }
+.sobre p { color: rgb(255 255 255 / 82%); max-width: 560px; }
+.sobre .eyebrow { color: var(--yellow); }
+.sobre__btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 22px; }
+.sobre__datos { list-style: none; margin: 0; padding: 0; display: grid; gap: 12px; }
+.sobre__datos li { display: flex; align-items: baseline; gap: 14px; padding: 16px 20px; border-radius: 16px; background: rgb(255 255 255 / 8%); }
+.sobre__datos b { font: 600 clamp(1.8rem, 3vw, 2.4rem)/1 var(--display); color: var(--yellow); min-width: 64px; }
+.sobre__datos span { color: rgb(255 255 255 / 85%); }
+.dlg--ancho { width: min(1100px, calc(100vw - 24px)); }
+.dlg__cuerpo > section { padding-left: clamp(16px, 3vw, 32px); padding-right: clamp(16px, 3vw, 32px); }
+.dlg__cuerpo .section, .dlg__cuerpo .section--tight { padding-top: 28px; padding-bottom: 28px; }
+.dlg__cuerpo .reveal { opacity: 1; transform: none; }
+@media (max-width: 820px) { .sobre { grid-template-columns: 1fr; } }
+[data-products]:not(.ver-todo) > :nth-child(n+7) { display: none; }
+.ver-todos { display: flex; justify-content: center; margin-top: 26px; }
+.dlg__cuerpo section, .dlg__cuerpo h2 { scroll-margin-top: 84px; }
 
 </style>
 </head>
@@ -1030,101 +1052,7 @@ dialog::backdrop { background: rgb(10 18 51 / 55%); backdrop-filter: blur(3px); 
       </div>
     </section>
 
-    <section class="section wrap" style="padding-top:clamp(24px,3vw,40px)" aria-labelledby="pop-titulo">
-      <div class="row-head">
-        <div>
-          <h2 class="h-section" id="pop-titulo">Encuentra el seguro para cada necesidad</h2>
-          <p>Elige los seguros que te interesan, agrégalos a tu solicitud y cotízalos juntos con un asesor.</p>
-        </div>
-        <a class="link" href="#seguros">Ver todos los seguros<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a>
-      </div>
-      <div class="products">
-<article class="product reveal" data-id="vida" data-cat="personas">
-  <button class="product__media tile tile--navy" type="button" data-quickview="vida" aria-label="Ver detalle: Seguro de Vida">
-    <span class="product__tag">Más vendido</span><span class="product__num">04</span>
-    <svg class="product__art" aria-hidden="true"><use href="#a-life"/></svg>
-    <span class="product__quick">Vista rápida</span>
-  </button>
-  <div class="product__info">
-    <p class="product__cat"><span>Personas y familias</span></p>
-    <h3 class="product__name">Seguro de Vida</h3>
-    <p class="product__desc">Tranquilidad para ti y tu familia en caso de invalidez, incapacidad total y/o permanente, enfermedades graves o fallecimiento.</p>
-    <button class="product__price" type="button" data-quickview="vida">Cotización personalizada<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
-  </div>
-  <button class="product__add" type="button" data-add="vida"><svg class="icon product__add-ico" aria-hidden="true"><use href="#i-shield"/></svg><span class="product__add-on">Agregar a mi solicitud</span><span class="product__add-off">✓ En tu solicitud</span><span class="product__add-go" aria-hidden="true"><svg class="icon"><use href="#i-arrow"/></svg></span></button>
-</article>
-<article class="product reveal" data-id="hogar" data-cat="personas">
-  <button class="product__media tile tile--rey" type="button" data-quickview="hogar" aria-label="Ver detalle: Seguro de Hogar">
-    <span class="product__tag">Más solicitado</span><span class="product__num">02</span>
-    <svg class="product__art" aria-hidden="true"><use href="#a-home"/></svg>
-    <span class="product__quick">Vista rápida</span>
-  </button>
-  <div class="product__info">
-    <p class="product__cat"><span>Personas y familias</span></p>
-    <h3 class="product__name">Seguro de Hogar</h3>
-    <p class="product__desc">Protección para tu vivienda y tus bienes. Este seguro cubre daños o pérdidas materiales que puedan afectar tu hogar y los bienes que se encuentran en él.</p>
-    <button class="product__price" type="button" data-quickview="hogar">Cotización personalizada<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
-  </div>
-  <button class="product__add" type="button" data-add="hogar"><svg class="icon product__add-ico" aria-hidden="true"><use href="#i-shield"/></svg><span class="product__add-on">Agregar a mi solicitud</span><span class="product__add-off">✓ En tu solicitud</span><span class="product__add-go" aria-hidden="true"><svg class="icon"><use href="#i-arrow"/></svg></span></button>
-</article>
-<article class="product reveal" data-id="multirriesgo" data-cat="empresas">
-  <button class="product__media tile tile--indigo" type="button" data-quickview="multirriesgo" aria-label="Ver detalle: Seguro Empresarial Multirriesgo">
-    <span class="product__tag">Más solicitado</span><span class="product__num">07</span>
-    <svg class="product__art" aria-hidden="true"><use href="#a-building"/></svg>
-    <span class="product__quick">Vista rápida</span>
-  </button>
-  <div class="product__info">
-    <p class="product__cat"><span>Empresas</span></p>
-    <h3 class="product__name">Seguro Empresarial Multirriesgo</h3>
-    <p class="product__desc">Protege la operación de tu negocio. Una solución diseñada para proteger tu empresa frente a riesgos como daños materiales, pérdidas o eventos que afecten la operación del negocio.</p>
-    <button class="product__price" type="button" data-quickview="multirriesgo">Cotización personalizada<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
-  </div>
-  <button class="product__add" type="button" data-add="multirriesgo"><svg class="icon product__add-ico" aria-hidden="true"><use href="#i-shield"/></svg><span class="product__add-on">Agregar a mi solicitud</span><span class="product__add-off">✓ En tu solicitud</span><span class="product__add-go" aria-hidden="true"><svg class="icon"><use href="#i-arrow"/></svg></span></button>
-</article>
-<article class="product reveal" data-id="movilidad" data-cat="personas">
-  <button class="product__media tile tile--petroleo" type="button" data-quickview="movilidad" aria-label="Ver detalle: Seguro de Movilidad">
-    <span class="product__num">01</span>
-    <svg class="product__art" aria-hidden="true"><use href="#a-car"/></svg>
-    <span class="product__quick">Vista rápida</span>
-  </button>
-  <div class="product__info">
-    <p class="product__cat"><span>Personas y familias</span></p>
-    <h3 class="product__name">Seguro de Movilidad</h3>
-    <p class="product__desc">Protege tu vehículo y tu tranquilidad. Este seguro cubre daños o pérdidas que puedan afectar tu automóvil, motocicleta o bicicleta, así como posibles afectaciones a terceros.</p>
-    <button class="product__price" type="button" data-quickview="movilidad">Cotización personalizada<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></button>
-  </div>
-  <button class="product__add" type="button" data-add="movilidad"><svg class="icon product__add-ico" aria-hidden="true"><use href="#i-shield"/></svg><span class="product__add-on">Agregar a mi solicitud</span><span class="product__add-off">✓ En tu solicitud</span><span class="product__add-go" aria-hidden="true"><svg class="icon"><use href="#i-arrow"/></svg></span></button>
-</article>
-      </div>
-    </section>
 
-    <section class="section on-dark" aria-labelledby="ai-titulo" style="background:var(--night-2)">
-      <div class="wrap ai-block">
-        <div>
-          <span class="eyebrow">RG AI · Asistente virtual</span>
-          <h2 class="h-big reveal" id="ai-titulo">¿No encuentras lo que <span class="hl">buscas</span>?</h2>
-          <p>Pregúntale a RG AI, a cualquier hora: te orienta sobre tipos de seguros, qué hacer ante un siniestro y cómo dar el siguiente paso con un asesor.</p>
-          <button class="btn btn--yellow" type="button" data-rgai-open style="margin-top:12px"><svg class="icon" aria-hidden="true"><use href="#i-spark"/></svg>Hablar con RG AI</button>
-          <p class="contact-title">¿Cómo quieres contactarnos?</p>
-          <div class="contact-row">
-            <a class="btn btn--ghost" href="https://wa.me/573165268039?text=Hola,%20quiero%20recibir%20asesor%C3%ADa%20sobre%20seguros" target="_blank" rel="noopener"><svg class="icon" aria-hidden="true"><use href="#i-wa"/></svg>Escribir por WhatsApp</a>
-            <a class="btn btn--ghost" href="tel:+573165268039"><svg class="icon" aria-hidden="true"><use href="#i-phone"/></svg>Llamar 316 526 8039</a>
-            <a class="btn btn--ghost" href="cuenta/"><svg class="icon" aria-hidden="true"><use href="#i-user"/></svg>Ingresar a Mi cuenta</a>
-          </div>
-        </div>
-        <div class="ai-mock reveal">
-          <span class="eyebrow" style="color:var(--muted)">Ejemplo de conversación</span>
-          <p class="ai-mock__q">Choqué mi carro, ¿qué hago?</p>
-          <p class="ai-mock__a">Primero, asegúrate de que todos estén bien; si hay heridos, llama al 123. Después escríbenos por WhatsApp y te acompañamos en el proceso de reclamación con tu aseguradora.</p>
-          <button class="ai-prompt" type="button" data-rgai-teaser aria-label="Abrir RG AI y escribir una pregunta">Escribe tu pregunta sobre seguros…<span class="send" aria-hidden="true"><svg class="icon"><use href="#i-send"/></svg></span></button>
-          <ul class="chips">
-            <li><button class="chip" type="button" data-ask="¿Qué seguro me conviene para mi carro o moto?">Seguro para mi vehículo</button></li>
-            <li><button class="chip" type="button" data-ask="¿Qué cubre un seguro de hogar?">¿Qué cubre un seguro de hogar?</button></li>
-            <li><button class="chip" type="button" data-ask="Necesito una póliza de cumplimiento para un contrato, ¿cómo funciona?">Póliza de cumplimiento</button></li>
-          </ul>
-        </div>
-      </div>
-    </section>
 
     <section class="section wrap" aria-labelledby="marcas-titulo">
       <div class="row-head">
@@ -1154,13 +1082,9 @@ dialog::backdrop { background: rgb(10 18 51 / 55%); backdrop-filter: blur(3px); 
     </section>
   
 
-    <section id="seguros" class="page-top" aria-labelledby="titulo-seguros">
-      <div class="wrap">
-        <h2 class="h-display" id="titulo-seguros">Nuestros <span class="hl">seguros</span></h2>
-        <p>Contamos con soluciones de seguros diseñadas para proteger lo que más valoras. Te acompañamos con asesoría personalizada para que encuentres la cobertura ideal según tus necesidades y las de tu familia.</p>
-      </div>
-    </section>
+    <section id="seguros" class="section--tight wrap cabeza" aria-labelledby="titulo-seguros"><span class="eyebrow">Catálogo</span><h2 class="h-section" id="titulo-seguros">Nuestros seguros</h2><p>Soluciones para proteger lo que más valoras, con asesoría personalizada para encontrar la cobertura ideal.</p></section>
 
+    <div class="cat-zona">
     <div class="filterbar">
       <div class="wrap">
         <div class="tabs" role="group" aria-label="Filtrar seguros">
@@ -1344,126 +1268,21 @@ dialog::backdrop { background: rgb(10 18 51 / 55%); backdrop-filter: blur(3px); 
   <button class="product__add" type="button" data-add="arl"><svg class="icon product__add-ico" aria-hidden="true"><use href="#i-shield"/></svg><span class="product__add-on">Agregar a mi solicitud</span><span class="product__add-off">✓ En tu solicitud</span><span class="product__add-go" aria-hidden="true"><svg class="icon"><use href="#i-arrow"/></svg></span></button>
 </article>
       </div>
+      <div class="ver-todos"><button class="btn btn--line" type="button" data-ver-todos>Ver los 12 seguros</button></div>
     </section>
+    </div>
 
-    <section class="section on-dark" aria-labelledby="ayuda-titulo">
-      <div class="wrap ai-block">
-        <div>
-          <span class="eyebrow">¿No sabes cuál elegir?</span>
-          <h2 class="h-big reveal" id="ayuda-titulo">Te ayudamos a encontrar <span class="hl">tu seguro ideal</span></h2>
-          <p>Analizamos tus necesidades y te recomendamos el seguro que mejor se adapta a tu situación. Pregúntale primero a RG AI o habla directamente con un asesor.</p>
-        </div>
-        <div class="hero__actions">
-          <button class="btn btn--yellow" type="button" data-rgai-open><svg class="icon" aria-hidden="true"><use href="#i-spark"/></svg>Preguntar a RG AI</button>
-          <a class="btn btn--ghost" href="https://wa.me/573165268039?text=Hola,%20quiero%20recibir%20asesor%C3%ADa%20sobre%20seguros" target="_blank" rel="noopener">Hablar con un asesor</a>
-        </div>
-      </div>
-    </section>
   
 
-    <section id="nosotros" class="page-hero" aria-labelledby="titulo-nosotros">
-      <picture>
-          <img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-img="i1" width="1280" height="853" alt="Equipo de RG Asesorías y Seguros" fetchpriority="high">
-      </picture>
-      <div class="page-hero__content wrap">
-        <span class="eyebrow">Nosotros</span>
-        <h2 class="h-display" style="margin-bottom:18px">¿Quiénes <span class="hl">somos</span>?</h2>
-        <p>Comprometidos con tu seguridad y tranquilidad.</p>
+    <section class="section wrap" aria-labelledby="sobre-titulo">
+      <div class="sobre">
+        <div><span class="eyebrow">Sobre RG</span><h2 class="h-section" id="sobre-titulo">Más de 15 años protegiendo lo que más valoras</h2><p>Somos profesionales especializados en asesoría en seguros y protección patrimonial en Valledupar, Cesar. Te ayudamos a tomar decisiones informadas para cuidar tu patrimonio, tu bienestar y tu futuro.</p><div class="sobre__btns"><a class="btn btn--yellow" href="#nosotros">Conócenos</a><a class="btn btn--ghost" href="#nosotros" data-ir="misión">Misión y visión</a><a class="btn btn--ghost" href="#nosotros" data-ir="equipo-titulo">Nuestro equipo</a></div></div>
+        <ul class="sobre__datos"><li><b>+15</b><span>años de experiencia</span></li><li><b>12</b><span>tipos de seguros</span></li><li><b>7</b><span>personas a tu servicio</span></li></ul>
       </div>
     </section>
 
-    <section class="section wrap" aria-labelledby="historia-titulo">
-      <div class="story">
-        <picture>
-          <img class="reveal" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-img="i18" width="853" height="1280" alt="Equipo de RG Asesorías y Seguros" loading="lazy">
-        </picture>
-        <div>
-          <span class="eyebrow">La empresa</span>
-          <h2 class="h-big reveal" id="historia-titulo">Profesionales en protección <span class="hl-navy">patrimonial</span></h2>
-          <p class="lead">RG Asesorías y Seguros es una organización conformada por profesionales especializados en asesoramiento en seguros y protección patrimonial.</p>
-          <p>Nuestro objetivo es ayudar a personas, familias y empresas a tomar decisiones informadas para proteger su patrimonio, su bienestar y su futuro.</p>
-          <div class="stats" style="border-top-color:var(--line);margin-top:28px;grid-template-columns:1fr">
-            <p class="stat" style="padding-top:22px"><strong style="color:var(--navy)">+15</strong><span style="color:var(--ink)">Años de experiencia</span></p>
-          </div>
-        </div>
-      </div>
-    </section>
 
-    <section class="section--tight wrap" aria-label="Misión y visión" style="padding-top:0">
-      <div class="mv">
-        <article class="reveal"><span class="eyebrow">Nuestra misión</span><h2 class="h-section">Lo que más valoras, protegido</h2><p>Acompañamos a personas, familias y empresas en la protección de lo que más valoran, ofreciendo asesoría especializada en seguros, soluciones personalizadas y un servicio cercano y transparente. Nuestro compromiso es construir relaciones de confianza, brindar tranquilidad y estar presentes en cada etapa de la vida de nuestros clientes.</p></article>
-        <article class="reveal"><span class="eyebrow">Nuestra visión</span><h2 class="h-section">Experiencia y tecnología</h2><p>Consolidarnos como una agencia de seguros referente por su excelencia, cercanía e innovación, integrando experiencia y tecnología para ofrecer soluciones ágiles, modernas y adaptadas a las necesidades de cada cliente. Aspiramos a transformar la experiencia de asesoría en seguros, manteniendo siempre la honestidad, la transparencia y el valor del acompañamiento humano.</p></article>
-      </div>
-    </section>
-
-    <section class="section wrap" aria-labelledby="compromiso-titulo">
-      <div class="row-head">
-        <div>
-          <h2 class="h-section" id="compromiso-titulo">Nuestro compromiso</h2>
-          <p>Nos enfocamos en brindar una experiencia de servicio basada en:</p>
-        </div>
-      </div>
-      <ol class="list-check">
-        <li class="reveal"><b>01</b><span>Atención personalizada</span></li>
-        <li class="reveal"><b>02</b><span>Análisis profesional de riesgos</span></li>
-        <li class="reveal"><b>03</b><span>Comunicación constante con nuestros clientes</span></li>
-        <li class="reveal"><b>04</b><span>Acompañamiento durante reclamaciones</span></li>
-      </ol>
-    </section>
-
-    <section class="section--tight wrap" aria-labelledby="equipo-titulo" style="padding-bottom:clamp(56px,7vw,100px)">
-      <div class="row-head"><h2 class="h-section" id="equipo-titulo">Las personas detrás de RG</h2><a class="link" href="#contacto">Habla con nuestro equipo<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
-      <div class="gallery">
-        <picture class="g1"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-img="i3" width="1280" height="853" alt="Equipo de RG Asesorías y Seguros conversando" loading="lazy"></picture>
-        <picture><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-img="i19" width="480" height="720" alt="Asesora de RG Asesorías y Seguros" loading="lazy"></picture>
-        <picture><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-img="i20" width="480" height="720" alt="Asesora de RG Asesorías y Seguros" loading="lazy"></picture>
-      </div>
-      <p class="equipo-intro reveal"><b>El equipo detrás de tu tranquilidad.</b> En RG Asesorías y Seguros creemos que la verdadera protección comienza con las personas. Somos un equipo comprometido con brindar asesoría cercana, soluciones confiables y acompañamiento en cada etapa de la vida de nuestros clientes.</p>
-      <div class="equipo">
-        <article class="persona reveal"><span class="persona__ini" aria-hidden="true">RG</span><h3 class="persona__nombre">Rita Guerrero Gutiérrez</h3><p class="persona__rol">CEO · Dirección General</p><p>Con más de 20 años de trayectoria en el sector asegurador, Rita ha construido su camino profesional sobre la confianza, la cercanía y el compromiso genuino con sus clientes.</p><details class="persona__mas"><summary>Leer más</summary><p>Apasionada por crear historias de protección, encuentra en los seguros de ahorro, vida individual y vida grupo la oportunidad de transformar la prevención en bienestar y tranquilidad.</p><p>Como líder de RG Asesorías y Seguros, inspira a su equipo a crecer bajo principios de honestidad, transparencia y servicio humano, valores que definen la esencia de nuestra compañía.</p></details></article>
-        <article class="persona reveal"><span class="persona__ini" aria-hidden="true">MO</span><h3 class="persona__nombre">María Laura Ortiz Guerrero</h3><p class="persona__rol">Gerente</p><p>Especialista en Seguros de la Universidad Externado de Colombia, María Laura forma parte de RG Asesorías y Seguros desde 2023, aportando una visión renovadora y estratégica al crecimiento de la compañía.</p><details class="persona__mas"><summary>Leer más</summary><p>Su enfoque profesional se centra en los seguros de cumplimiento y las soluciones colectivas empresariales, combinando conocimiento técnico con una mirada hacia la innovación y la transformación tecnológica.</p><p>Su propósito es impulsar una asesoría moderna, eficiente y preparada para los desafíos de un mercado en constante evolución.</p></details></article>
-        <article class="persona reveal"><span class="persona__ini" aria-hidden="true">JA</span><h3 class="persona__nombre">Johana Acuña</h3><p class="persona__rol">Directora Comercial</p><p>Con más de 10 años de experiencia en el sector asegurador, Johana cuenta con conocimientos en diferentes ramos de seguros y una sólida orientación hacia la atención de clientes corporativos.</p><details class="persona__mas"><summary>Leer más</summary><p>Su gestión comercial se caracteriza por comprender las necesidades de cada empresa, construir relaciones de confianza y ofrecer un acompañamiento continuo.</p><p>Apasionada por la innovación y las nuevas tecnologías, busca integrar herramientas modernas que fortalezcan la experiencia del cliente y generen nuevas oportunidades de crecimiento.</p></details></article>
-        <article class="persona reveal"><span class="persona__ini" aria-hidden="true">PC</span><h3 class="persona__nombre">Patricia Castilla</h3><p class="persona__rol">Administradora</p><p>Patricia desempeña un papel fundamental en la organización y el funcionamiento de RG Asesorías y Seguros.</p><details class="persona__mas"><summary>Leer más</summary><p>Desde la gestión administrativa, contribuye al direccionamiento de los procesos internos y a la proyección del equipo, promoviendo el orden, la coordinación y el trabajo conjunto.</p><p>Su labor permite fortalecer la estructura de nuestra compañía y acompañar su crecimiento con una visión organizada y orientada al cumplimiento de objetivos.</p></details></article>
-        <article class="persona reveal"><span class="persona__ini" aria-hidden="true">SP</span><h3 class="persona__nombre">Silvio Pérez</h3><p class="persona__rol">Asesor de Seguros</p><p>Con más de cinco años de trayectoria en RG Asesorías y Seguros, Silvio se ha destacado por su cercanía y compromiso con el acompañamiento de sus clientes.</p><details class="persona__mas"><summary>Leer más</summary><p>Su experiencia se enfoca especialmente en seguros de automóviles y soluciones para pequeñas y medianas empresas (pymes), ofreciendo propuestas competitivas y asesoría adaptada a cada necesidad.</p><p>Su vocación de servicio se refleja especialmente en los momentos que más importan: cuando sus clientes necesitan orientación y acompañamiento ante un siniestro.</p></details></article>
-        <article class="persona reveal"><span class="persona__ini" aria-hidden="true">JG</span><h3 class="persona__nombre">José Miguel Gómez</h3><p class="persona__rol">Analista de Cumplimiento</p><p>José Miguel combina su conocimiento en la gestión de pólizas de cumplimiento y fianzas con un especial interés por la tecnología y la innovación.</p><details class="persona__mas"><summary>Leer más</summary><p>Su curiosidad y pensamiento creativo lo impulsan a proponer nuevas herramientas digitales y soluciones de software orientadas a optimizar procesos y facilitar las tareas del equipo.</p><p>Desde su rol, aporta una mirada práctica y moderna que contribuye a la evolución tecnológica de RG Asesorías y Seguros.</p></details></article>
-        <article class="persona reveal"><span class="persona__ini" aria-hidden="true">AC</span><h3 class="persona__nombre">Ana Cecilia Contreras</h3><p class="persona__rol">Auxiliar de Cartera</p><p>La organización, la honestidad y el compromiso son pilares del trabajo de Ana Cecilia en RG Asesorías y Seguros.</p><details class="persona__mas"><summary>Leer más</summary><p>Desde el área de cartera, acompaña los procesos de gestión de cobros, seguimiento de pagos y atención al cliente, contribuyendo al cumplimiento oportuno de los compromisos financieros.</p><p>Su atención al detalle y su sentido de responsabilidad hacen de su gestión una parte esencial del servicio y la confianza que ofrecemos.</p></details></article>
-      </div>
-    </section>
-
-    <section class="banner" aria-labelledby="exito-titulo">
-      <picture>
-        <img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-img="i2" width="1280" height="853" alt="" loading="lazy">
-      </picture>
-      <div class="banner__content wrap">
-        <span class="eyebrow">Nuestros casos de éxito</span>
-        <h2 class="h-display reveal" id="exito-titulo">Los servicios más <span class="hl">solicitados</span></h2>
-        <div class="stats stats--texto">
-          <p class="stat"><span>Seguros de vida</span></p>
-          <p class="stat"><span>Seguros de hogar</span></p>
-          <p class="stat"><span>Seguros multirriesgo</span></p>
-        </div>
-      </div>
-    </section>
-
-    <section class="banner" aria-labelledby="cta-titulo" style="min-height:420px">
-      <picture><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-img="i3" width="1280" height="853" alt="" loading="lazy"></picture>
-      <div class="banner__content wrap">
-        <span class="eyebrow">Tu tranquilidad es nuestra prioridad</span>
-        <h2 class="h-display reveal" id="cta-titulo">Te acompañamos en cada <span class="hl">decisión</span></h2>
-        <div class="hero__actions">
-          <a class="btn btn--white" href="#seguros">Ver seguros</a>
-          <a class="btn btn--ghost" href="#formulario">Solicitar asesoría</a>
-        </div>
-      </div>
-    </section>
-  
-
-    <section id="contacto" class="page-top" aria-labelledby="titulo-contacto">
-      <div class="wrap">
-        <h2 class="h-display" id="titulo-contacto">Contác<span class="hl">tanos</span></h2>
-        <p>Estamos aquí para ayudarte. Escríbenos, llámanos o déjanos tus datos y uno de nuestros asesores se pondrá en contacto contigo.</p>
-      </div>
-    </section>
+    <section id="contacto" class="section--tight wrap cabeza" aria-labelledby="titulo-contacto"><span class="eyebrow">Contacto</span><h2 class="h-section" id="titulo-contacto">Hablemos</h2><p>Escríbenos, llámanos o déjanos tus datos y un asesor se pondrá en contacto contigo. <a href="#preguntas">Ver preguntas frecuentes</a></p></section>
 
     <section class="section wrap" aria-label="Canales de contacto y formulario">
       <div class="contact">
@@ -1540,40 +1359,8 @@ dialog::backdrop { background: rgb(10 18 51 / 55%); backdrop-filter: blur(3px); 
       </div>
     </section>
 
-    <section class="section section--mist" id="preguntas" aria-labelledby="faq-titulo">
-      <div class="wrap">
-        <div class="row-head">
-          <div>
-            <h2 class="h-section" id="faq-titulo">Preguntas frecuentes</h2>
-            <p>Resolvemos algunas de las dudas más comunes sobre nuestros seguros y servicios.</p>
-          </div>
-        </div>
-        <div class="faq">
-          <details>
-            <summary><span>¿Qué tipo de seguros ofrecen?</span><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></summary>
-            <div><p>Ofrecemos seguros para personas y empresas, incluyendo seguros de vida, salud, hogar, vehículo, responsabilidad civil y seguros empresariales. Nuestro equipo te ayuda a encontrar la mejor protección según tus necesidades.</p></div>
-          </details>
-          <details>
-            <summary><span>¿Cómo puedo saber qué seguro necesito?</span><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></summary>
-            <div><p>Realizamos un análisis personalizado para conocer tu situación y tus objetivos. Con base en esa información te recomendamos el seguro que mejor se adapte a ti o a tu empresa.</p></div>
-          </details>
-          <details>
-            <summary><span>¿Cuánto cuesta contratar un seguro?</span><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></summary>
-            <div><p>El costo depende del tipo de seguro, la cobertura y el perfil del asegurado. Nuestro equipo te ayuda a comparar opciones para encontrar una solución adecuada a tu presupuesto.</p></div>
-          </details>
-          <details>
-            <summary><span>¿Qué debo hacer en caso de un siniestro?</span><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></summary>
-            <div><p>Debes comunicarte con nosotros lo antes posible. Te acompañaremos en todo el proceso de reclamación para garantizar que el trámite sea claro, rápido y favorable para ti.</p></div>
-          </details>
-          <details>
-            <summary><span>¿Cómo puedo solicitar una cotización?</span><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></summary>
-            <div><p>Puedes solicitar asesoría a través del formulario del sitio web, teléfono o WhatsApp. Uno de nuestros asesores se pondrá en contacto contigo para brindarte información y ayudarte a elegir el seguro ideal.</p></div>
-          </details>
-        </div>
-      </div>
-    </section>
   </main>
-<dialog class="pol-dlg" id="politica" aria-labelledby="titulo-politica"><div class="pol-dlg__head"><h2 id="titulo-politica">Tratamiento de datos personales</h2><button type="button" data-cerrar-pol aria-label="Cerrar">×</button></div><div class="prose pol">
+<dialog class="pol-dlg" id="politica" aria-labelledby="titulo-dlg-politica"><div class="pol-dlg__head"><h2 id="titulo-dlg-politica">Tratamiento de datos personales</h2><button type="button" data-cerrar-dlg aria-label="Cerrar">×</button></div><div class="dlg__cuerpo"><div class="prose pol">
         <!-- BORRADOR: texto pendiente de revisión y aprobación por RG Asesorías y Seguros Ltda. (y su asesor jurídico). -->
         <p class="pol__resp"><strong>Responsable:</strong> RG Asesorías y Seguros Ltda. · NIT 900871243-4 · Valledupar, Cesar<br>
           <a href="mailto:Comercial@rgasesoriasyseguros.com.co">Comercial@rgasesoriasyseguros.com.co</a> · <a href="tel:+573165268039">316 526 8039</a> · <a href="tel:+573162492831">316 249 2831</a></p>
@@ -1607,15 +1394,129 @@ dialog::backdrop { background: rgb(10 18 51 / 55%); backdrop-filter: blur(3px); 
           <summary>Seguridad y marco legal</summary>
           <p>Protegemos tus datos con medidas técnicas y administrativas razonables y los conservamos solo el tiempo necesario para estas finalidades. Esta política cumple la Ley 1581 de 2012 y el Decreto 1377 de 2013 (Decreto 1074 de 2015).</p>
         </details>
-      </div></dialog>
+      </div></div></dialog>
+<dialog class="pol-dlg dlg--ancho" id="nosotros" aria-labelledby="titulo-dlg-nosotros"><div class="pol-dlg__head"><h2 id="titulo-dlg-nosotros">Conoce RG Asesorías y Seguros</h2><button type="button" data-cerrar-dlg aria-label="Cerrar">×</button></div><div class="dlg__cuerpo">
+    <section class="section wrap" aria-labelledby="historia-titulo">
+      <div class="story">
+        <picture>
+          <img class="reveal" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-img="i18" width="853" height="1280" alt="Equipo de RG Asesorías y Seguros" loading="lazy">
+        </picture>
+        <div>
+          <span class="eyebrow">La empresa</span>
+          <h2 class="h-big reveal" id="historia-titulo">Profesionales en protección <span class="hl-navy">patrimonial</span></h2>
+          <p class="lead">RG Asesorías y Seguros es una organización conformada por profesionales especializados en asesoramiento en seguros y protección patrimonial.</p>
+          <p>Nuestro objetivo es ayudar a personas, familias y empresas a tomar decisiones informadas para proteger su patrimonio, su bienestar y su futuro.</p>
+          <div class="stats" style="border-top-color:var(--line);margin-top:28px;grid-template-columns:1fr">
+            <p class="stat" style="padding-top:22px"><strong style="color:var(--navy)">+15</strong><span style="color:var(--ink)">Años de experiencia</span></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section--tight wrap" aria-label="Misión y visión" style="padding-top:0">
+      <div class="mv">
+        <article class="reveal"><span class="eyebrow">Nuestra misión</span><h2 class="h-section">Lo que más valoras, protegido</h2><p>Acompañamos a personas, familias y empresas en la protección de lo que más valoran, ofreciendo asesoría especializada en seguros, soluciones personalizadas y un servicio cercano y transparente. Nuestro compromiso es construir relaciones de confianza, brindar tranquilidad y estar presentes en cada etapa de la vida de nuestros clientes.</p></article>
+        <article class="reveal"><span class="eyebrow">Nuestra visión</span><h2 class="h-section">Experiencia y tecnología</h2><p>Consolidarnos como una agencia de seguros referente por su excelencia, cercanía e innovación, integrando experiencia y tecnología para ofrecer soluciones ágiles, modernas y adaptadas a las necesidades de cada cliente. Aspiramos a transformar la experiencia de asesoría en seguros, manteniendo siempre la honestidad, la transparencia y el valor del acompañamiento humano.</p></article>
+      </div>
+    </section>
+
+    <section class="section wrap" aria-labelledby="compromiso-titulo">
+      <div class="row-head">
+        <div>
+          <h2 class="h-section" id="compromiso-titulo">Nuestro compromiso</h2>
+          <p>Nos enfocamos en brindar una experiencia de servicio basada en:</p>
+        </div>
+      </div>
+      <ol class="list-check">
+        <li class="reveal"><b>01</b><span>Atención personalizada</span></li>
+        <li class="reveal"><b>02</b><span>Análisis profesional de riesgos</span></li>
+        <li class="reveal"><b>03</b><span>Comunicación constante con nuestros clientes</span></li>
+        <li class="reveal"><b>04</b><span>Acompañamiento durante reclamaciones</span></li>
+      </ol>
+    </section>
+
+    <section class="section--tight wrap" aria-labelledby="equipo-titulo" style="padding-bottom:clamp(56px,7vw,100px)">
+      <div class="row-head"><h2 class="h-section" id="equipo-titulo">Las personas detrás de RG</h2><a class="link" href="#contacto">Habla con nuestro equipo<svg class="icon" aria-hidden="true"><use href="#i-arrow"/></svg></a></div>
+      <div class="gallery">
+        <picture class="g1"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-img="i3" width="1280" height="853" alt="Equipo de RG Asesorías y Seguros conversando" loading="lazy"></picture>
+        <picture><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-img="i19" width="480" height="720" alt="Asesora de RG Asesorías y Seguros" loading="lazy"></picture>
+        <picture><img src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==" data-img="i20" width="480" height="720" alt="Asesora de RG Asesorías y Seguros" loading="lazy"></picture>
+      </div>
+      <p class="equipo-intro reveal"><b>El equipo detrás de tu tranquilidad.</b> En RG Asesorías y Seguros creemos que la verdadera protección comienza con las personas. Somos un equipo comprometido con brindar asesoría cercana, soluciones confiables y acompañamiento en cada etapa de la vida de nuestros clientes.</p>
+      <div class="equipo">
+        <article class="persona reveal"><span class="persona__ini" aria-hidden="true">RG</span><h3 class="persona__nombre">Rita Guerrero Gutiérrez</h3><p class="persona__rol">CEO · Dirección General</p><p>Con más de 20 años de trayectoria en el sector asegurador, Rita ha construido su camino profesional sobre la confianza, la cercanía y el compromiso genuino con sus clientes.</p><details class="persona__mas"><summary>Leer más</summary><p>Apasionada por crear historias de protección, encuentra en los seguros de ahorro, vida individual y vida grupo la oportunidad de transformar la prevención en bienestar y tranquilidad.</p><p>Como líder de RG Asesorías y Seguros, inspira a su equipo a crecer bajo principios de honestidad, transparencia y servicio humano, valores que definen la esencia de nuestra compañía.</p></details></article>
+        <article class="persona reveal"><span class="persona__ini" aria-hidden="true">MO</span><h3 class="persona__nombre">María Laura Ortiz Guerrero</h3><p class="persona__rol">Gerente</p><p>Especialista en Seguros de la Universidad Externado de Colombia, María Laura forma parte de RG Asesorías y Seguros desde 2023, aportando una visión renovadora y estratégica al crecimiento de la compañía.</p><details class="persona__mas"><summary>Leer más</summary><p>Su enfoque profesional se centra en los seguros de cumplimiento y las soluciones colectivas empresariales, combinando conocimiento técnico con una mirada hacia la innovación y la transformación tecnológica.</p><p>Su propósito es impulsar una asesoría moderna, eficiente y preparada para los desafíos de un mercado en constante evolución.</p></details></article>
+        <article class="persona reveal"><span class="persona__ini" aria-hidden="true">JA</span><h3 class="persona__nombre">Johana Acuña</h3><p class="persona__rol">Directora Comercial</p><p>Con más de 10 años de experiencia en el sector asegurador, Johana cuenta con conocimientos en diferentes ramos de seguros y una sólida orientación hacia la atención de clientes corporativos.</p><details class="persona__mas"><summary>Leer más</summary><p>Su gestión comercial se caracteriza por comprender las necesidades de cada empresa, construir relaciones de confianza y ofrecer un acompañamiento continuo.</p><p>Apasionada por la innovación y las nuevas tecnologías, busca integrar herramientas modernas que fortalezcan la experiencia del cliente y generen nuevas oportunidades de crecimiento.</p></details></article>
+        <article class="persona reveal"><span class="persona__ini" aria-hidden="true">PC</span><h3 class="persona__nombre">Patricia Castilla</h3><p class="persona__rol">Administradora</p><p>Patricia desempeña un papel fundamental en la organización y el funcionamiento de RG Asesorías y Seguros.</p><details class="persona__mas"><summary>Leer más</summary><p>Desde la gestión administrativa, contribuye al direccionamiento de los procesos internos y a la proyección del equipo, promoviendo el orden, la coordinación y el trabajo conjunto.</p><p>Su labor permite fortalecer la estructura de nuestra compañía y acompañar su crecimiento con una visión organizada y orientada al cumplimiento de objetivos.</p></details></article>
+        <article class="persona reveal"><span class="persona__ini" aria-hidden="true">SP</span><h3 class="persona__nombre">Silvio Pérez</h3><p class="persona__rol">Asesor de Seguros</p><p>Con más de cinco años de trayectoria en RG Asesorías y Seguros, Silvio se ha destacado por su cercanía y compromiso con el acompañamiento de sus clientes.</p><details class="persona__mas"><summary>Leer más</summary><p>Su experiencia se enfoca especialmente en seguros de automóviles y soluciones para pequeñas y medianas empresas (pymes), ofreciendo propuestas competitivas y asesoría adaptada a cada necesidad.</p><p>Su vocación de servicio se refleja especialmente en los momentos que más importan: cuando sus clientes necesitan orientación y acompañamiento ante un siniestro.</p></details></article>
+        <article class="persona reveal"><span class="persona__ini" aria-hidden="true">JG</span><h3 class="persona__nombre">José Miguel Gómez</h3><p class="persona__rol">Analista de Cumplimiento</p><p>José Miguel combina su conocimiento en la gestión de pólizas de cumplimiento y fianzas con un especial interés por la tecnología y la innovación.</p><details class="persona__mas"><summary>Leer más</summary><p>Su curiosidad y pensamiento creativo lo impulsan a proponer nuevas herramientas digitales y soluciones de software orientadas a optimizar procesos y facilitar las tareas del equipo.</p><p>Desde su rol, aporta una mirada práctica y moderna que contribuye a la evolución tecnológica de RG Asesorías y Seguros.</p></details></article>
+        <article class="persona reveal"><span class="persona__ini" aria-hidden="true">AC</span><h3 class="persona__nombre">Ana Cecilia Contreras</h3><p class="persona__rol">Auxiliar de Cartera</p><p>La organización, la honestidad y el compromiso son pilares del trabajo de Ana Cecilia en RG Asesorías y Seguros.</p><details class="persona__mas"><summary>Leer más</summary><p>Desde el área de cartera, acompaña los procesos de gestión de cobros, seguimiento de pagos y atención al cliente, contribuyendo al cumplimiento oportuno de los compromisos financieros.</p><p>Su atención al detalle y su sentido de responsabilidad hacen de su gestión una parte esencial del servicio y la confianza que ofrecemos.</p></details></article>
+      </div>
+    </section>
+</div></dialog>
+<dialog class="pol-dlg dlg--ancho" id="preguntas" aria-labelledby="titulo-dlg-preguntas"><div class="pol-dlg__head"><h2 id="titulo-dlg-preguntas">Preguntas frecuentes</h2><button type="button" data-cerrar-dlg aria-label="Cerrar">×</button></div><div class="dlg__cuerpo">
+    <section class="section section--mist" aria-labelledby="faq-titulo">
+      <div class="wrap">
+        <div class="row-head">
+          <div>
+            <h2 class="h-section" id="faq-titulo">Preguntas frecuentes</h2>
+            <p>Resolvemos algunas de las dudas más comunes sobre nuestros seguros y servicios.</p>
+          </div>
+        </div>
+        <div class="faq">
+          <details>
+            <summary><span>¿Qué tipo de seguros ofrecen?</span><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></summary>
+            <div><p>Ofrecemos seguros para personas y empresas, incluyendo seguros de vida, salud, hogar, vehículo, responsabilidad civil y seguros empresariales. Nuestro equipo te ayuda a encontrar la mejor protección según tus necesidades.</p></div>
+          </details>
+          <details>
+            <summary><span>¿Cómo puedo saber qué seguro necesito?</span><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></summary>
+            <div><p>Realizamos un análisis personalizado para conocer tu situación y tus objetivos. Con base en esa información te recomendamos el seguro que mejor se adapte a ti o a tu empresa.</p></div>
+          </details>
+          <details>
+            <summary><span>¿Cuánto cuesta contratar un seguro?</span><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></summary>
+            <div><p>El costo depende del tipo de seguro, la cobertura y el perfil del asegurado. Nuestro equipo te ayuda a comparar opciones para encontrar una solución adecuada a tu presupuesto.</p></div>
+          </details>
+          <details>
+            <summary><span>¿Qué debo hacer en caso de un siniestro?</span><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></summary>
+            <div><p>Debes comunicarte con nosotros lo antes posible. Te acompañaremos en todo el proceso de reclamación para garantizar que el trámite sea claro, rápido y favorable para ti.</p></div>
+          </details>
+          <details>
+            <summary><span>¿Cómo puedo solicitar una cotización?</span><svg class="icon" aria-hidden="true"><use href="#i-plus"/></svg></summary>
+            <div><p>Puedes solicitar asesoría a través del formulario del sitio web, teléfono o WhatsApp. Uno de nuestros asesores se pondrá en contacto contigo para brindarte información y ayudarte a elegir el seguro ideal.</p></div>
+          </details>
+        </div>
+      </div>
+    </section>
+</div></dialog>
 <script>
 (function () {
-  var d = document.getElementById('politica');
-  function abrir(e) { if (e) e.preventDefault(); if (!d.open) d.showModal(); }
-  document.addEventListener('click', function (e) { var a = e.target.closest && e.target.closest('a[href="#politica"]'); if (a) abrir(e); });
-  d.querySelector('[data-cerrar-pol]').addEventListener('click', function () { d.close(); });
-  d.addEventListener('click', function (e) { if (e.target === d) d.close(); });
-  if (location.hash === '#politica') abrir();
+  // Enlaces a #politica, #nosotros o #preguntas abren su ventana; data-ir lleva a una parte de ella
+  function abrir(id, ir) {
+    var d = document.getElementById(id); if (!d || d.tagName !== 'DIALOG') return false;
+    document.querySelectorAll('dialog[open]').forEach(function (x) { if (x !== d) x.close(); });
+    if (!d.open) d.showModal();
+    d.querySelectorAll('.reveal').forEach(function (x) { x.classList.add('is-visible', 'in'); });
+    var destino = ir && (document.getElementById(ir) || d.querySelector('[aria-label="' + (ir === 'misión' ? 'Misión y visión' : ir) + '"]'));
+    if (destino) destino.scrollIntoView({ block: 'start' }); else d.scrollTop = 0;
+    return true;
+  }
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[href^="#"]'); if (!a) return;
+    if (abrir(a.getAttribute('href').slice(1), a.getAttribute('data-ir'))) e.preventDefault();
+    else if (a.hasAttribute('data-cerrar-dlg')) { var d = a.closest('dialog'); if (d) d.close(); }
+  });
+  document.querySelectorAll('dialog.pol-dlg').forEach(function (d) {
+    d.querySelector('[data-cerrar-dlg]').addEventListener('click', function () { d.close(); });
+    d.addEventListener('click', function (e) { if (e.target === d) d.close(); });
+  });
+  if (location.hash) abrir(location.hash.slice(1));
+  var prod = document.querySelector('[data-products]'), ver = document.querySelector('[data-ver-todos]');
+  function todo() { prod.classList.add('ver-todo'); ver.parentNode.hidden = true; }
+  ver.addEventListener('click', todo);
+  document.querySelectorAll('[data-filter]').forEach(function (b) { b.addEventListener('click', todo); });
+  // un enlace a una tarjeta escondida (búsqueda, menú) primero muestra el catálogo completo
+  document.addEventListener('click', function (e) { var a = e.target.closest && e.target.closest('a[href^="#"]'); var t = a && a.getAttribute('href').length > 1 && document.getElementById(a.getAttribute('href').slice(1)); if (t && (prod.contains(t) || /^(personas|empresas)$/.test(t.id))) todo(); }, true);
+  if (/^#(personas|empresas)$/.test(location.hash) || (location.hash.length > 1 && prod.querySelector(location.hash))) todo();
 })();
 </script>
 
