@@ -19,7 +19,8 @@ import { INSTRUCCIONES } from "./instrucciones.ts";
 
 const WHATSAPP = "https://wa.me/573165268039";
 const NO_DISPONIBLE = `RG AI no está disponible en este momento. Escríbenos por WhatsApp (${WHATSAPP}) o llámanos al 316 526 8039.`;
-const LIMITES = { porVentana: 20, ventanaMin: 10, porDia: 80, globalDia: 600 };
+// globalDia ≈ suma de los cupos gratis de los 3 modelos Gemini de respaldo
+const LIMITES = { porVentana: 20, ventanaMin: 10, porDia: 150, globalDia: 1500 };
 
 type Mensaje = { role: "user" | "assistant"; content: string };
 
