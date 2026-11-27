@@ -132,22 +132,37 @@ export async function manejar(req: Request): Promise<Response> {
 
 /** Google Gemini (plan gratuito de AI Studio). Se usa cuando existe GEMINI_API_KEY. */
 async function conGemini(clave: string, mensajes: Mensaje[]): Promise<[number, Record<string, unknown>]> {
-  const modelo = Deno.env.get("GEMINI_MODELO") || "gemini-flash-latest";
+  // El plan gratuito a veces responde "alta demanda" (503) o cupo agotado (429): se prueba el siguiente modelo
+  const modelos = (Deno.env.get("GEMINI_MODELO") || "gemini-flash-latest,gemini-flash-lite-latest,gemini-2.5-flash").split(",").map((m) => m.trim()).filter(Boolean);
+  let modelo = modelos[0], cupoAgotado = false;
   try {
-    const res = await fetch(`${Deno.env.get("GEMINI_BASE_URL") || "https://generativelanguage.googleapis.com"}/v1beta/models/${encodeURIComponent(modelo)}:generateContent`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "x-goog-api-key": clave },
-      body: JSON.stringify({
-        systemInstruction: { parts: [{ text: INSTRUCCIONES }] },
-        contents: mensajes.map((m) => ({ role: m.role === "assistant" ? "model" : "user", parts: [{ text: m.content }] })),
-        generationConfig: { maxOutputTokens: 2048, temperature: 0.4 },
-      }),
-    });
     // deno-lint-ignore no-explicit-any
-    const r: any = await res.json().catch(() => ({}));
-    if (!res.ok) {
-      console.error(`[rg-ai] Gemini ${res.status}: ${r?.error?.message ?? ""}`);
-      if (res.status === 429) return [429, { ok: false, message: `RG AI alcanzó su límite de consultas por ahora. Escríbenos por WhatsApp (${WHATSAPP}) o llámanos al 316 526 8039.` }];
+    let res: Response | null = null, r: any = {};
+    for (modelo of modelos) {
+      try {
+        res = await fetch(`${Deno.env.get("GEMINI_BASE_URL") || "https://generativelanguage.googleapis.com"}/v1beta/models/${encodeURIComponent(modelo)}:generateContent`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "x-goog-api-key": clave },
+          body: JSON.stringify({
+            systemInstruction: { parts: [{ text: INSTRUCCIONES }] },
+            contents: mensajes.map((m) => ({ role: m.role === "assistant" ? "model" : "user", parts: [{ text: m.content }] })),
+            generationConfig: { maxOutputTokens: 2048, temperature: 0.4 },
+          }),
+          signal: AbortSignal.timeout(20000),
+        });
+      } catch (e) {
+        console.error(`[rg-ai] Gemini ${modelo} sin respuesta: ${(e as Error).message}`);
+        res = null;
+        continue;
+      }
+      r = await res.json().catch(() => ({}));
+      if (res.ok) break;
+      console.error(`[rg-ai] Gemini ${modelo} ${res.status}: ${r?.error?.message ?? ""}`);
+      if (res.status === 429) cupoAgotado = true;
+      if (![404, 429, 500, 503].includes(res.status)) break; // clave inválida o petición mala: otro modelo no lo arregla
+    }
+    if (!res?.ok) {
+      if (cupoAgotado) return [429, { ok: false, message: `RG AI alcanzó su límite de consultas por ahora. Escríbenos por WhatsApp (${WHATSAPP}) o llámanos al 316 526 8039.` }];
       return [502, { ok: false, message: NO_DISPONIBLE }];
     }
     const c = r.candidates?.[0];
